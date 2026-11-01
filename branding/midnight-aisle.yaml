@@ -1,0 +1,23 @@
+channel: horror
+name: "Midnight Aisle Tales"
+tagline: "Horror Stories Animated"
+font: fonts/Creepster.ttf
+tagline_font: fonts/Fredoka.ttf
+name_fill: [235, 235, 225]
+name_stroke: [120, 0, 0]
+tagline_fill: [170, 255, 200]
+tagline_stroke: [0, 0, 0]
+style: >-
+  dark 2D illustrated horror cartoon, muted teal and grey palette with sickly fluorescent green
+  light, heavy shadows, grainy texture, cinematic, no text, no letters, no logos, no gore
+mascot: >-
+  The Night Clerk, an original tall thin faceless shadow figure wearing a dark store employee
+  vest and name tag, two small glowing white eyes, long arms hanging past its knees
+dp_prompt: >-
+  close-up of the Night Clerk from image 0 peeking from behind the end of a dark store shelf,
+  only its glowing eyes and part of the shadowy head visible, centered, single flickering
+  fluorescent tube light above, dark background
+banner_prompt: >-
+  wide panoramic view down an endless empty supermarket aisle at 3am, flickering fluorescent
+  lights, fog on the floor, the Night Clerk from image 0 standing far at the end of the aisle
+  on the right side, shopping cart abandoned on the left, dark empty area in the middle

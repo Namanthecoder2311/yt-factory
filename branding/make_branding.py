@@ -18,9 +18,10 @@ FONT = Path("fonts/Fredoka.ttf")
 FALLBACK = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
 
-def font(size):
-    if FONT.exists():
-        f = ImageFont.truetype(str(FONT), size)
+def font(size, path=FONT):
+    path = Path(path)
+    if path.exists():
+        f = ImageFont.truetype(str(path), size)
         try:
             f.set_variation_by_name("Bold")
         except Exception:
@@ -57,8 +58,14 @@ def main(cfg_path, out):
     banner = banner.filter(ImageFilter.UnsharpMask(radius=2, percent=60))
     d = ImageDraw.Draw(banner)
     cx, cy = 1280, 720                                   # centre of the 1546x423 safe area
-    outlined(d, (cx, cy - 40), cfg["name"], font(190), (255, 255, 255), (235, 90, 40), 16)
-    outlined(d, (cx, cy + 120), cfg["tagline"], font(78), (255, 214, 60), (60, 60, 140), 8)
+    color = lambda key, default: tuple(cfg.get(key, default))  # noqa: E731
+    name_font = font(190, cfg.get("font", FONT))
+    while d.textlength(cfg["name"], font=name_font) > 1500 and name_font.size > 90:
+        name_font = font(name_font.size - 10, cfg.get("font", FONT))
+    outlined(d, (cx, cy - 40), cfg["name"], name_font, color("name_fill", (255, 255, 255)),
+             color("name_stroke", (235, 90, 40)), 16)
+    outlined(d, (cx, cy + 120), cfg["tagline"], font(78, cfg.get("tagline_font", FONT)),
+             color("tagline_fill", (255, 214, 60)), color("tagline_stroke", (60, 60, 140)), 8)
     banner.save(out / "banner_2560x1440.png")
 
     preview = banner.copy()                              # shows the safe area for review

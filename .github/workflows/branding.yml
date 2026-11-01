@@ -18,10 +18,11 @@ jobs:
           python-version: "3.11"
       - run: sudo apt-get install -y -qq fonts-dejavu-core
       - run: pip install -q pyyaml pillow numpy opencv-python-headless requests soundfile
-      - name: Fredoka font (SIL Open Font License)
+      - name: Fonts (Fredoka, Creepster; SIL Open Font License)
         run: |
           mkdir -p fonts
           curl -sSL -o fonts/Fredoka.ttf "https://github.com/google/fonts/raw/main/ofl/fredoka/Fredoka%5Bwdth,wght%5D.ttf" || true
+          curl -sSL -o fonts/Creepster.ttf "https://github.com/google/fonts/raw/main/ofl/creepster/Creepster-Regular.ttf" || true
       - name: Make profile picture and banner
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
