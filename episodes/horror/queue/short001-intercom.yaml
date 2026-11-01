@@ -1,0 +1,59 @@
+title: "He Called My Name at 3AM"
+channel: horror
+format: short
+speed: 1.0
+hook: "NEVER ANSWER THE 3AM PAGE"
+youtube:
+  title: "Never Answer the Store Intercom at 3AM 😨 #shorts"
+  description: >-
+    My manager had one rule for the night shift. I found out why. Part of The Night Clerk series.
+  tags: [horror shorts, scary stories, night shift horror, animated horror, creepy, horror story animated]
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+style: >-
+  dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters,
+  no logos, no gore
+characters:
+  Daniel:
+    look: >-
+      a 19 year old skinny young man with messy dark brown hair, tired eyes, wearing a blue store
+      employee vest over a grey hoodie and a name tag
+  Clerk:
+    look: >-
+      the Night Clerk, an extremely tall thin faceless shadow figure in a dark store vest,
+      two small glowing white eyes, long arms hanging past its knees
+stories:
+  - title: "Intercom"
+    scenes:
+      - image: "close-up of a ceiling speaker in a dark supermarket at night, green fluorescent glow"
+        hero: "the ceiling speaker vibrates with static, dust drifts down, light flickers"
+        lines:
+          - "[SFX:knock] Daniel. Aisle fourteen."
+      - image: "Daniel frozen while stacking cans in an empty supermarket aisle at 3am, looking up"
+        cast: [Daniel]
+        hero: "the young man freezes with a can in his hand and slowly looks up at the ceiling"
+        lines:
+          - "I was the only one working. And that was my manager's voice."
+      - image: "a tired manager asleep in a back office lit by security monitors"
+        hero: "the manager sleeps at the desk, monitors flicker, his phone lies untouched"
+        lines:
+          - "But my manager was asleep in the office."
+      - image: "Daniel walking slowly down a long fluorescent aisle, seen from behind, fog on the floor"
+        cast: [Daniel]
+        weather: fog
+        hero: "the young man walks slowly away from the camera down the aisle, lights flicker one by one"
+        lines:
+          - "So I went to aisle fourteen. Every box on the shelf was turned around."
+      - image: "the Night Clerk standing at the end of the aisle in darkness, tilting its head"
+        cast: [Clerk]
+        weather: fog
+        hero: "the tall shadow figure slowly tilts its head, its glowing white eyes brighten"
+        lines:
+          - "[SCARE] Then the speaker whispered, right behind me."
+      - image: "extreme close-up of Daniel's terrified face lit by green light, a long shadow hand on his shoulder"
+        cast: [Daniel, Clerk]
+        hero: "a long shadowy hand slowly closes on the young man's shoulder, his eyes widen in terror"
+        lines:
+          - {Intercom: "Daniel. You answered."}

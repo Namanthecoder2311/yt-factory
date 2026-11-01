@@ -1,0 +1,62 @@
+title: "The Man Who Wouldn't Let Me Get In My Car"
+channel: horror
+format: short
+speed: 1.0
+hook: "HE SAID: DON'T GET IN YOUR CAR"
+youtube:
+  title: "A Stranger Begged Me Not to Get in My Car 😰 #shorts"
+  description: >-
+    A rainy parking lot, a stranger with a strange request, and a back seat I never checked.
+  tags: [horror shorts, scary stories, parking lot horror, animated horror, creepy, horror story animated]
+voices:
+  Narrator: af_bella
+  Stranger: am_onyx
+style: >-
+  dark 2D illustrated horror cartoon, clean bold outlines, cold blue rain-soaked palette with
+  orange sodium streetlights, heavy shadows, cinematic vertical composition, no text, no letters,
+  no logos, no gore
+characters:
+  Mia:
+    look: >-
+      a young woman in her twenties with a dark ponytail, wearing a yellow rain jacket, carrying
+      grocery bags
+  Stranger:
+    look: >-
+      a soaked middle-aged man in a dark jacket with kind but frightened eyes and stubble
+stories:
+  - title: "Back Seat"
+    scenes:
+      - image: "Mia loading grocery bags into her car trunk in a dark rainy parking lot at night"
+        cast: [Mia]
+        weather: rain
+        hero: "the woman hurriedly loads bags into the trunk as heavy rain falls and puddles ripple"
+        lines:
+          - "Eleven p.m. Pouring rain. Empty parking lot."
+      - image: "the Stranger approaching under a flickering streetlight, holding car keys, rain pouring"
+        cast: [Stranger]
+        weather: rain
+        hero: "the soaked man walks toward the camera, raising his car keys, rain streaming down"
+        lines:
+          - {Stranger: "Please. Walk me back inside. Right now."}
+      - image: "Mia stepping back nervously from the stranger beside her car, rain, orange light"
+        cast: [Mia, Stranger]
+        weather: rain
+        hero: "the woman steps back nervously while the man keeps glancing past her at the car"
+        lines:
+          - "He wasn't looking at me. He was staring at my car."
+      - image: "Mia and the Stranger walking quickly toward a bright store entrance in the rain"
+        cast: [Mia, Stranger]
+        weather: rain
+        hero: "the two of them walk quickly toward the glowing store doors, rain splashing at their feet"
+        lines:
+          - "Something in his voice made me go."
+      - image: "the inside of a car at night, a shadowy figure crouched on the back seat floor, rain on windows"
+        weather: rain
+        hero: "a dark crouched figure on the back seat floor slowly raises its head toward the camera"
+        lines:
+          - "[SCARE] He had seen someone hiding behind my seat."
+      - image: "close-up of an empty car back seat with the door open in the rain, a roll of duct tape on the floor"
+        weather: rain
+        hero: "the open car door creaks in the wind, rain blows in, the duct tape slowly rolls on the floor"
+        lines:
+          - "When the police came, the back door was open. And the seat was still warm."

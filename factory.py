@@ -36,7 +36,7 @@ KLEIN_MODEL = "@cf/black-forest-labs/flux-2-klein-4b"
 IMAGE_SIZES = {"long": (1344, 768), "short": (768, 1344)}
 # (render size, output size); rendering below output size is ~2x faster and the 1024px
 # source images hold no extra detail anyway. ffmpeg upscales and draws crisp captions.
-SIZES = {"long": ((1280, 720), (1920, 1080)), "short": ((720, 1280), (1080, 1920))}
+SIZES = {"long": ((1280, 720), (1920, 1080)), "short": ((1080, 1920), (1080, 1920))}
 MARKER = re.compile(r"\[(SCARE|SFX:(\w+))\]")
 
 
@@ -210,22 +210,25 @@ def story_timeline(ep, si, voices):
         t += len(wav) / SR + gap
         return start
 
-    title_wav, _ = voices.say(story["title"] + ".", "Narrator")
-    add(title_wav, [], 1.0)
-    scenes.append({"start": 0.0, "end": t, "title": story["title"]})
+    short = ep.get("format") == "short"
+    line_gap, scene_gap = (0.12, 0.15) if short else (LINE_GAP, SCENE_GAP)  # Shorts: no dead air
+    if not short:  # long videos open each story on a spoken title card
+        title_wav, _ = voices.say(story["title"] + ".", "Narrator")
+        add(title_wav, [], 1.0)
+        scenes.append({"start": 0.0, "end": t, "title": story["title"]})
 
     for scene in story["scenes"]:
         s0 = t
         for line in scene["lines"]:
             speaker, text, scare, sfx = parse_line(line)
             wav, ws = voices.say(text, speaker)
-            start = add(wav, ws, LINE_GAP)
+            start = add(wav, ws, line_gap)
             if scare:
                 events.append(("scare", start))
             if sfx:
                 events.append((sfx, start))
-        t += SCENE_GAP
-        chunks.append(np.zeros(int(SCENE_GAP * SR), dtype=np.float32))
+        t += scene_gap
+        chunks.append(np.zeros(int(scene_gap * SR), dtype=np.float32))
         scenes.append({"start": s0, "end": t, "scene": scene})
     return np.concatenate(chunks), words, scenes, events, t
 
@@ -405,7 +408,7 @@ def load_clip(path, size):
     return frames or None
 
 
-def render_scene(proc, lay, scene, f0, f1, t0, scares, fx, size, rng, idx, hero=None):
+def render_scene(proc, lay, scene, f0, f1, t0, scares, fx, size, rng, idx, hero=None, fill=False):
     w, h = size
     aspect = w / h
     cw_max = min(lay.w, lay.h * aspect)
@@ -413,7 +416,8 @@ def render_scene(proc, lay, scene, f0, f1, t0, scares, fx, size, rng, idx, hero=
     n = f1 - f0
     # The scene opens on its animated hero clip (if one was made), slowed to HERO_LEN with
     # frame blending; parallax shots fill the rest.
-    hero_n = min(n, round(HERO_LEN * FPS)) if hero else 0
+    # Shorts (fill=True): the clip carries the whole scene, so every shot is real motion.
+    hero_n = (n if fill else min(n, round(HERO_LEN * FPS))) if hero else 0
     rest = max(1, n - hero_n)
     shots = max(1, round(rest / FPS / SHOT_LEN))
     kinds = ["wide", "close", "pan"]
@@ -487,10 +491,13 @@ def write_ass(words, titles, out_size, path, per_line):
              "BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV",
              f"Style: Cap,DejaVu Sans,{fs},&H00FFFFFF,&H00000000,&H90000000,1,1,5,2,2,60,60,{margin}",
              f"Style: Title,DejaVu Sans,{title_fs},&H00E0E0E0,&H00000000,&H00000000,1,1,4,0,5,80,80,0",
+             # Shorts hook: big yellow text in the top third for the first seconds
+             f"Style: Hook,DejaVu Sans,{title_fs},&H0000E6FF,&H00000000,&H00000000,1,1,7,2,8,70,70,"
+             f"{int(h * 0.12)}",
              "", "[Events]", "Format: Layer, Start, End, Style, Text"]
-    for start, end, text in titles:
-        lines.append(f"Dialogue: 1,{ass_time(start)},{ass_time(end)},Title,"
-                     f"{{\\fad(400,400)}}{text.upper()}")
+    for start, end, text, style in titles:
+        lines.append(f"Dialogue: 1,{ass_time(start)},{ass_time(end)},{style},"
+                     f"{{\\fad(250,300)}}{text.upper()}")
     groups, cur = [], []
     for wd in words:
         if cur and (len(cur) >= per_line or wd[1] - cur[-1][2] > 0.6):
@@ -518,18 +525,24 @@ def cmd_story(ep, si):
     narr, words, scenes, events, dur = story_timeline(ep, si, Voices(ep))
     audio = out / f"audio_s{si}.wav"
     mix_audio(narr, dur, events, audio, seed=si)
-    titles = [(0.2, scenes[0]["end"] - 0.2, ep["stories"][si]["title"])]
+    short = fmt == "short"
+    if short:
+        titles = [(0.0, 2.6, ep["hook"], "Hook")] if ep.get("hook") else []
+    else:
+        titles = [(0.2, scenes[0]["end"] - 0.2, ep["stories"][si]["title"], "Title")]
     ass = out / f"subs_s{si}.ass"
-    write_ass(words, titles, out_size, ass, per_line=3 if fmt == "short" else 6)
+    write_ass(words, titles, out_size, ass, per_line=3 if short else 6)
 
     total = round(dur * FPS)
     final = out / f"story_{si}.mp4"
+    quality = ["-crf", "19", "-maxrate", "12M", "-bufsize", "24M", "-preset", "medium"] if short \
+        else ["-crf", "24", "-maxrate", "4500k", "-bufsize", "9M", "-preset", "veryfast"]
     proc = subprocess.Popen(
         ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
          "-s", f"{size[0]}x{size[1]}", "-r", str(FPS), "-i", "-", "-i", str(audio),
          "-vf", f"scale={out_size[0]}:{out_size[1]}:flags=lanczos,subtitles={ass.as_posix()}",
-         "-af", "aecho=0.8:0.6:45:0.12", "-c:v", "libx264", "-preset", "veryfast", "-crf", "24",
-         "-maxrate", "4500k", "-bufsize", "9M", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
+         "-af", "aecho=0.8:0.6:45:0.12", "-c:v", "libx264", *quality,
+         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
          "-ar", "48000", "-ac", "2", "-frames:v", str(total), "-movflags", "+faststart", str(final)],
         stdin=subprocess.PIPE)
     fx = Effects(size, seed=si)
@@ -540,11 +553,12 @@ def cmd_story(ep, si):
         if "title" in sc:
             render_title(proc, f0, f1, fx)
         else:
-            lay = Layers(images[k - 1])
-            clip = out / "clips" / f"s{si}_{k - 1:02d}.mp4"
+            idx = k if short else k - 1          # long videos have a title scene at index 0
+            lay = Layers(images[idx])
+            clip = out / "clips" / f"s{si}_{idx:02d}.mp4"
             hero = load_clip(clip, size) if clip.exists() else None
             render_scene(proc, lay, sc["scene"], f0, f1, sc["start"], scares, fx, size, rng, k,
-                         hero=hero)
+                         hero=hero, fill=short)
         print(f"story {si}: scene {k}/{len(scenes) - 1} done ({sc['end']:.0f}s)", flush=True)
     proc.stdin.close()
     if proc.wait() != 0:
@@ -560,12 +574,18 @@ def cmd_images(ep):
 def cmd_herojobs(ep, path):
     """Kaggle animation jobs for every scene that has a `hero:` motion prompt."""
     clips = []
+    short = ep.get("format") == "short"
+    lead = {"horror": "2D animated horror cartoon, cinematic, smooth motion.",
+            "kids": "3D animated cartoon for toddlers, soft lighting, bouncy smooth motion."}[
+        ep.get("channel", "horror")]
+    # Shorts: vertical, ~3.4 s clips, 4x anime upscale so the 1080x1920 frame stays crisp.
+    size = {"width": 352, "height": 640, "frames": 81, "upscale": True} if short else \
+        {"width": 640, "height": 352, "frames": 49}
     for si, story in enumerate(ep["stories"]):
         for k, scene in enumerate(story["scenes"]):
             if scene.get("hero"):
                 clips.append({"id": f"s{si}_{k:02d}", "image": str(ep["out"] / f"img_s{si}_{k:02d}.png"),
-                              "prompt": f"2D animated horror cartoon, cinematic. {scene['hero']}",
-                              "frames": 49, "steps": 30, "width": 640, "height": 352})
+                              "prompt": f"{lead} {scene['hero']}", "steps": 30, **size})
     Path(path).write_text(json.dumps({"clips": clips}, indent=1))
     print(f"{len(clips)} hero clips")
 

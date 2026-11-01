@@ -43,7 +43,8 @@ jobs:
           python factory.py herojobs '${{ inputs.episode }}' --out hero_jobs.json
           SLUG=$(basename '${{ inputs.episode }}' .yaml)
           if python -c "import json,sys; sys.exit(0 if json.load(open('hero_jobs.json'))['clips'] else 1)"; then
-            python kaggle/run_on_kaggle.py hero_jobs.json "out/$SLUG"
+            # one Kaggle kernel per episode, so parallel builds never overwrite each other
+            python kaggle/run_on_kaggle.py hero_jobs.json "out/$SLUG" --name "anim-${SLUG:0:30}"
           fi
       - uses: actions/upload-artifact@v4
         with:
