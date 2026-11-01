@@ -1,0 +1,31 @@
+name: Animate on Kaggle
+
+on:
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: "Jobs JSON path"
+        required: true
+        default: "tests/anim/jobs.json"
+
+jobs:
+  animate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q -U kaggle
+      - name: Run on Kaggle GPU
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: python kaggle/run_on_kaggle.py "${{ inputs.jobs }}" anim_out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: anim
+          path: anim_out/
+          retention-days: 3
