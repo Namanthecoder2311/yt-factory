@@ -1,0 +1,53 @@
+title: "Aisle Fourteen (60s pilot)"
+channel: horror
+format: long
+speed: 0.92
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+style: >-
+  dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic wide composition, no text, no letters, no logos, no gore
+characters:
+  Daniel:
+    look: >-
+      a 19 year old skinny young man with messy dark brown hair, tired eyes, wearing a blue store
+      employee vest over a grey hoodie and a name tag
+  Clerk:
+    look: >-
+      the Night Clerk, an extremely tall thin faceless shadow figure in a dark store vest,
+      two small glowing white eyes, long arms hanging past its knees
+thumbnail:
+  story: 1
+  scene: 4
+  text: "DON'T ANSWER THE PAGE"
+stories:
+  - title: "The Night Stocker"
+    scenes:
+      - image: "Daniel stacking cans alone in an endless supermarket aisle at 3am, flickering fluorescent lights"
+        cast: [Daniel]
+        hero: "the young man stacks a can on the shelf, then slowly looks up as the fluorescent light above him flickers"
+        lines:
+          - "Overnight stocking. Ten p.m. to seven a.m. Just me, and two hundred thousand square feet of empty store."
+      - image: "old ceiling speakers in a dark supermarket, faint static glow, empty aisle below"
+        hero: "the ceiling speaker vibrates and buzzes with static, dust falls, the light flickers"
+        lines:
+          - "[SFX:knock] At three seventeen, the speakers crackled."
+          - {Intercom: "Daniel. Aisle fourteen, please."}
+      - image: "Daniel standing frozen in an aisle, looking up at the ceiling, scared, cold green light"
+        cast: [Daniel]
+        hero: "the young man slowly turns his head toward the end of the aisle, breathing nervously"
+        lines:
+          - "Nobody else was working that night. And the voice knew my name."
+      - image: "the Night Clerk standing at the far end of a long empty supermarket aisle, fog on the floor"
+        cast: [Clerk]
+        weather: fog
+        hero: "the tall shadow figure at the end of the aisle slowly tilts its head, its glowing eyes brighten"
+        lines:
+          - "At the end of aisle fourteen, something was standing. Too tall. Arms too long."
+          - "[SCARE] And it was smiling at me."
+      - image: "close-up of a black and white security monitor showing Daniel with the Night Clerk right behind him"
+        cast: [Daniel, Clerk]
+        hero: "on the security monitor the tall figure slowly leans down toward the unaware young man, static rolls across the screen"
+        lines:
+          - "I never answered the page. But the cameras show it was standing right behind me. The whole time."

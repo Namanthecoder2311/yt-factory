@@ -27,6 +27,7 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 SR = 24000
 FPS = 30
 SHOT_LEN = 3.6
+HERO_LEN = 3.6       # seconds a ~2 s AI clip is stretched to (slow motion reads as eerie)
 LINE_GAP = 0.3
 SCENE_GAP = 0.5
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
@@ -387,36 +388,63 @@ def warp(layer, cx, cy, s, cw_max, ch_max, size):
     return cv2.warpAffine(layer, m, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
 
-def render_scene(proc, lay, scene, f0, f1, t0, scares, fx, size, rng, idx):
+def load_clip(path, size):
+    """Hero clip frames, graded like the stills and cover-cropped to the render size."""
+    w, h = size
+    cap, frames = cv2.VideoCapture(str(path)), []
+    while True:
+        ok, f = cap.read()
+        if not ok:
+            break
+        f = grade(cv2.cvtColor(f, cv2.COLOR_BGR2RGB))
+        s = max(w / f.shape[1], h / f.shape[0])
+        f = cv2.resize(f, (round(f.shape[1] * s) + 1, round(f.shape[0] * s) + 1),
+                       interpolation=cv2.INTER_CUBIC)
+        y, x = (f.shape[0] - h) // 2, (f.shape[1] - w) // 2
+        frames.append(f[y:y + h, x:x + w].astype(np.float32))
+    return frames or None
+
+
+def render_scene(proc, lay, scene, f0, f1, t0, scares, fx, size, rng, idx, hero=None):
     w, h = size
     aspect = w / h
     cw_max = min(lay.w, lay.h * aspect)
     ch_max = cw_max / aspect
     n = f1 - f0
-    shots = max(1, round(n / FPS / SHOT_LEN))
+    # The scene opens on its animated hero clip (if one was made), slowed to HERO_LEN with
+    # frame blending; parallax shots fill the rest.
+    hero_n = min(n, round(HERO_LEN * FPS)) if hero else 0
+    rest = max(1, n - hero_n)
+    shots = max(1, round(rest / FPS / SHOT_LEN))
     kinds = ["wide", "close", "pan"]
     weather = scene.get("weather", "none")
     for i in range(n):
         t = t0 + i / FPS
-        si = min(shots - 1, i * shots // n)
-        p = ease((i - si * n / shots) / (n / shots))
-        a, b = shot_plan(kinds[(idx + si) % 3], lay.focus, (idx + si) % 2 == 0)
-        cx, cy, s, par = (x + (y - x) * p for x, y in zip(a, b))
-        for at in scares:                                      # punch-in + shake
-            dt = t - at
-            if 0 <= dt < 0.8:
-                s *= 1 - 0.14 * min(dt / 0.12, 1)
-                amp = 0.012 * (1 - dt / 0.8)
-                cx += rng.uniform(-amp, amp)
-                cy += rng.uniform(-amp, amp)
-        half_x = cw_max * s / 2 / lay.w
-        half_y = ch_max * s / 2 / lay.h
-        cx = min(max(cx, half_x), 1 - half_x)
-        cy = min(max(cy, half_y), 1 - half_y)
-        bg = warp(lay.bg, cx - par * 0.4, cy, s, cw_max, ch_max, size).astype(np.float32)
-        fg = warp(lay.fg, cx + par * 0.6, cy, s, cw_max, ch_max, size).astype(np.float32)
-        al = warp(lay.alpha, cx + par * 0.6, cy, s, cw_max, ch_max, size)[..., None]
-        frame = bg + (fg - bg) * al
+        if i < hero_n:
+            pos = i * (len(hero) - 1) / max(1, hero_n - 1)
+            k, frac = int(pos), pos - int(pos)
+            frame = hero[k] * (1 - frac) + hero[min(k + 1, len(hero) - 1)] * frac
+        else:
+            j = i - hero_n
+            si = min(shots - 1, j * shots // rest)
+            p = ease((j - si * rest / shots) / (rest / shots))
+            a, b = shot_plan(kinds[(idx + si) % 3], lay.focus, (idx + si) % 2 == 0)
+            cx, cy, s, par = (x + (y - x) * p for x, y in zip(a, b))
+            for at in scares:                                      # punch-in + shake
+                dt = t - at
+                if 0 <= dt < 0.8:
+                    s *= 1 - 0.14 * min(dt / 0.12, 1)
+                    amp = 0.012 * (1 - dt / 0.8)
+                    cx += rng.uniform(-amp, amp)
+                    cy += rng.uniform(-amp, amp)
+            half_x = cw_max * s / 2 / lay.w
+            half_y = ch_max * s / 2 / lay.h
+            cx = min(max(cx, half_x), 1 - half_x)
+            cy = min(max(cy, half_y), 1 - half_y)
+            bg = warp(lay.bg, cx - par * 0.4, cy, s, cw_max, ch_max, size).astype(np.float32)
+            fg = warp(lay.fg, cx + par * 0.6, cy, s, cw_max, ch_max, size).astype(np.float32)
+            al = warp(lay.alpha, cx + par * 0.6, cy, s, cw_max, ch_max, size)[..., None]
+            frame = bg + (fg - bg) * al
         if weather == "fog":
             off = int(t * 25) % w
             f = fx.fog[:, off:off + w]
@@ -513,12 +541,33 @@ def cmd_story(ep, si):
             render_title(proc, f0, f1, fx)
         else:
             lay = Layers(images[k - 1])
-            render_scene(proc, lay, sc["scene"], f0, f1, sc["start"], scares, fx, size, rng, k)
+            clip = out / "clips" / f"s{si}_{k - 1:02d}.mp4"
+            hero = load_clip(clip, size) if clip.exists() else None
+            render_scene(proc, lay, sc["scene"], f0, f1, sc["start"], scares, fx, size, rng, k,
+                         hero=hero)
         print(f"story {si}: scene {k}/{len(scenes) - 1} done ({sc['end']:.0f}s)", flush=True)
     proc.stdin.close()
     if proc.wait() != 0:
         raise RuntimeError("ffmpeg failed")
     print(json.dumps({"story": si, "duration_sec": round(dur, 1), "scenes": len(images)}))
+
+
+def cmd_images(ep):
+    for si in range(len(ep["stories"])):
+        story_images(ep, si)
+
+
+def cmd_herojobs(ep, path):
+    """Kaggle animation jobs for every scene that has a `hero:` motion prompt."""
+    clips = []
+    for si, story in enumerate(ep["stories"]):
+        for k, scene in enumerate(story["scenes"]):
+            if scene.get("hero"):
+                clips.append({"id": f"s{si}_{k:02d}", "image": str(ep["out"] / f"img_s{si}_{k:02d}.png"),
+                              "prompt": f"2D animated horror cartoon, cinematic. {scene['hero']}",
+                              "frames": 49, "steps": 30, "width": 640, "height": 352})
+    Path(path).write_text(json.dumps({"clips": clips}, indent=1))
+    print(f"{len(clips)} hero clips")
 
 
 def make_thumbnail(ep, out):
@@ -571,15 +620,21 @@ def cmd_assemble(ep):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["story", "assemble", "count", "characters"])
+    ap.add_argument("command", choices=["story", "assemble", "count", "characters", "images",
+                                        "herojobs"])
     ap.add_argument("episode")
     ap.add_argument("--index", type=int, default=0)
+    ap.add_argument("--out", default="hero_jobs.json")
     a = ap.parse_args()
     episode = load(a.episode)
     if a.command == "count":
         print(json.dumps(list(range(len(episode["stories"])))))
     elif a.command == "characters":
         character_refs(episode)
+    elif a.command == "images":
+        cmd_images(episode)
+    elif a.command == "herojobs":
+        cmd_herojobs(episode, a.out)
     elif a.command == "story":
         cmd_story(episode, a.index)
     else:
