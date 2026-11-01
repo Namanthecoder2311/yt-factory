@@ -49,7 +49,12 @@ except Exception as e:  # the 5B checkpoint may only load as the text+image WanP
     from diffusers import WanPipeline
     pipe = WanPipeline.from_pretrained(MODEL, vae=vae, torch_dtype=dtype)
     kind = "WanPipeline"
-pipe.enable_model_cpu_offload()
+# The UMT5 text encoder (~11 GB) and the 5B transformer (~10 GB) can't share a 15 GB T4, so
+# stream weights layer by layer instead of whole models (slower, but fits).
+if props.total_memory < 30e9:
+    pipe.enable_sequential_cpu_offload()
+else:
+    pipe.enable_model_cpu_offload()
 pipe.vae.enable_tiling()
 print(f"loaded {kind} in {time.time() - t_load:.0f}s", flush=True)
 
