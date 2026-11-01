@@ -1,0 +1,31 @@
+name: Animate on Modal
+
+on:
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: "Jobs JSON path"
+        required: true
+        default: "tests/anim/jobs.json"
+
+jobs:
+  animate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q -U modal
+      - name: Run on Modal GPU
+        env:
+          MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+        run: modal run modal_app/anim_modal.py --jobs "${{ inputs.jobs }}" --out anim_out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: anim-modal
+          path: anim_out/
+          retention-days: 3
