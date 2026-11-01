@@ -66,10 +66,13 @@ try:
     # the pin, plus its requirements file if it ships one.
     r = sh(f"{sys.executable} -m pip install -q --ignore-requires-python -e /tmp/ace")
     print(r.stdout[-1500:], r.stderr[-1500:], flush=True)
-    if os.path.exists("/tmp/ace/requirements.txt"):
-        r = sh(f"{sys.executable} -m pip install -q -r /tmp/ace/requirements.txt")
-        print(r.stderr[-1500:], flush=True)
-    sh(f"{sys.executable} -m pip install -q loguru")
+    import tomllib  # install every declared dependency except torch (keep Kaggle's CUDA build)
+
+    deps = tomllib.load(open("/tmp/ace/pyproject.toml", "rb")).get("project", {}).get("dependencies", [])
+    keep = [d for d in deps if not d.split()[0].lower().startswith(("torch", "torchvision", "torchaudio"))]
+    r = sh(f"{sys.executable} -m pip install -q " + " ".join(f"'{d}'" for d in keep)
+           + " loguru vector_quantize_pytorch")
+    print("deps:", keep, r.stderr[-1500:], flush=True)
     sys.path.insert(0, "/tmp/ace")
     from acestep.handler import AceStepHandler
     from acestep.inference import GenerationConfig, GenerationParams, generate_music
