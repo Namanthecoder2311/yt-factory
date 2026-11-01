@@ -1,0 +1,59 @@
+title: Dryer Number Four
+channel: horror
+format: short
+hook: CHECK INSIDE THE DRYER FIRST
+youtube:
+  title: 'The Laundromat Dryer Was Spinning on Its Own 😨 #shorts'
+  description: Never do laundry past midnight when the attendants leave. I should have turned back.
+  tags:
+  - horror shorts
+  - laundromat horror
+  - creepy stories
+  - animated horror
+  - horror story animated
+  - scary cartoon
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Mia:
+    look: a young woman in her twenties with a dark ponytail, wearing a yellow rain jacket
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+stories:
+- title: Dryer Number Four
+  scenes:
+  - image: Mia sitting on an orange fiberglass chair in an empty brightly-lit 24-hour laundromat
+    hero: a single industrial dryer drum spins silently behind glass as overhead lights buzz
+    lines:
+    - Industrial dryer number four only spins when someone is trapped inside.
+    cast:
+    - Mia
+  - image: close-up of the circular dryer glass showing dense condensation and tumbling yellow wool
+    hero: wet yellow fabric thuds against the glass as thick steam fogs the round window
+    lines:
+    - The glass was fogged with steam, tumbling soaked yellow wool.
+  - image: Mia standing before the metal machine looking at the empty digital coin slot displaying zeroes
+    hero: Mia reaches a hand toward the dial while the coin counter stays completely dark
+    lines:
+    - The shop was deserted, but the coin slot read zero.
+    cast:
+    - Mia
+  - image: a human palm pressing hard from inside the dryer glass leaving a clean handprint in the fog
+    hero: a pale hand slams against the glass from inside the tumbling drum
+    lines:
+    - '[SFX:knock]'
+    - A palm slammed the glass from the inside, wearing my exact yellow sleeve.
+    cast:
+    - Mia
+  - image: the glass exit doors of the laundromat snapping shut as the deadbolt turns by itself
+    hero: the exterior automatic doors slide shut and latch tight, trapping Mia inside
+    lines:
+    - '[SCARE] Then the front door locked behind me, reminding me that...'
+    cast:
+    - Mia

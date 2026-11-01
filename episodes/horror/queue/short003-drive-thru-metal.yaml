@@ -1,0 +1,61 @@
+title: Drive-Thru Metal
+channel: horror
+format: short
+hook: NEVER ANSWER THE EMPTY LANE
+youtube:
+  title: 'The Drive-Thru Chime Went Off With No Car 😨 #shorts'
+  description: My manager told me to ignore pump and lane chimes after 2 AM. I didn't listen.
+  tags:
+  - horror shorts
+  - night shift horror
+  - scary stories
+  - creepy cartoon
+  - fast food horror
+  - animated horror
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Daniel:
+    look: a 19 year old skinny young man with messy dark brown hair, tired eyes, wearing a blue store
+      employee vest over a grey hoodie and a name tag
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+stories:
+- title: Drive-Thru Metal
+  scenes:
+  - image: Daniel wearing a drive-thru headset at a stainless steel register, dark drive-thru lane outside
+      the window
+    hero: the green headset indicator pulses rapidly as static crackles through the speaker
+    lines:
+    - The drive-thru sensor only chimes for metal.
+    cast:
+    - Daniel
+    weather: fog
+  - image: split security camera monitor showing an empty asphalt drive-thru lane with yellow painted
+      lines
+    hero: the black and white security monitor screen flickers and rolls with static interference
+    lines:
+    - It went off at 2:14 AM. The outdoor monitor showed an empty curb.
+  - image: Daniel staring through the reflective sliding glass window into pitch darkness
+    hero: fog rolls against the exterior glass as Daniel leans forward nervously
+    lines:
+    - Stranger: '[SFX:whisper] Daniel. Open the slide.'
+    cast:
+    - Daniel
+    weather: fog
+  - image: close-up of the metal latch snapping locked on the sliding window frame
+    hero: Daniel's trembling hand slams the latch shut while the window glass rattles from outside
+    lines:
+    - I locked the glass. But the chime went off a second time—from inside.
+    cast:
+    - Daniel
+  - image: underneath the metal counter, six iron claws scraping against the grease trap tile
+    hero: sharp metal fingers emerge from the dark gap beneath the floor safe
+    lines:
+    - '[SCARE] Under my register, six iron nails scraped the tile, proving...'

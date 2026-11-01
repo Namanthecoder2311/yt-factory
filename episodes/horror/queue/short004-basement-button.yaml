@@ -1,0 +1,59 @@
+title: Basement Button
+channel: horror
+format: short
+hook: DO NOT PRESS THE STOP BUTTON
+youtube:
+  title: 'The Apartment Elevator Never Stops Here 😨 #shorts'
+  description: I took the night elevator up to the eighth floor. The cables had other plans.
+  tags:
+  - horror shorts
+  - elevator horror
+  - scary stories
+  - apartment horror
+  - creepy cartoon
+  - animated horror
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Mia:
+    look: a young woman in her twenties with a dark ponytail, wearing a yellow rain jacket
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+stories:
+- title: Basement Button
+  scenes:
+  - image: Mia standing inside a dim wood-paneled apartment elevator, staring at the brass button panel
+    hero: Mia presses the glowing number eight button as dust particles float in the yellow overhead light
+    lines:
+    - The basement button has been missing since 1994.
+    cast:
+    - Mia
+  - image: the elevator floor indicator arrow violently descending past floor one into blackness
+    hero: the floor indicator light jumps erratically downward as the elevator cables squeal overhead
+    lines:
+    - I pressed eight, but the car dropped past the ground level.
+  - image: elevator doors jammed open two inches revealing rough damp foundation concrete
+    hero: the elevator doors shudder against a solid concrete wall as red emergency lights blink
+    lines:
+    - '[PAUSE] The doors parted two inches against bare concrete.'
+    cast:
+    - Mia
+  - image: Mia looking up at the elevator ceiling escape hatch in dread
+    hero: the square metal hatch above Mia lifts slightly as gray dust falls onto her shoulders
+    lines:
+    - '[SFX:knock]'
+    - Stranger: Push it again.
+    cast:
+    - Mia
+  - image: close-up of the brass control panel where a gray decayed finger protrudes through the empty
+      button hole
+    hero: a pale wet finger curls outward from the empty button hole toward Mia's hand
+    lines:
+    - '[SCARE] In the empty circular socket where the button used to be, a wet finger pushed outward,
+      because...'

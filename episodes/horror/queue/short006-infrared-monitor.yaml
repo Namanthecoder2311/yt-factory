@@ -1,0 +1,58 @@
+title: Infrared Monitor
+channel: horror
+format: short
+hook: THE BABY MONITOR CAN SEE YOU
+youtube:
+  title: 'The Nursery Monitor Kept Following My Head 😨 #shorts'
+  description: Babysitting alone on a Friday night. The nursery camera turned toward the living room.
+  tags:
+  - horror shorts
+  - babysitter horror
+  - scary stories
+  - creepy cartoon
+  - animated horror
+  - creepy stories
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Mia:
+    look: a young woman in her twenties with a dark ponytail, wearing a yellow rain jacket
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+stories:
+- title: Infrared Monitor
+  scenes:
+  - image: Mia sitting on a dark living room sofa holding a glowing handheld baby monitor screen
+    hero: the green power LED on the baby monitor pulses as the screen shows an empty wooden crib
+    lines:
+    - Infrared cameras only glow green when someone is viewing the live feed.
+    cast:
+    - Mia
+  - image: the black and white night-vision display showing empty white sheets in the wooden crib upstairs
+    hero: the camera image shifts slightly with a quiet motor whine, panning away from the empty bed
+    lines:
+    - The crib upstairs had been empty since nine.
+  - image: Mia looking nervously toward the dark hallway stairs leading to the second floor
+    hero: Mia turns her head slowly toward the stairs as the handheld audio speaker hisses
+    lines:
+    - '[SFX:whisper]'
+    - Stranger: Mia. Turn around.
+    cast:
+    - Mia
+  - image: the monitor screen showing a dark angle looking down from the ceiling directly behind Mia's
+      sofa
+    hero: on screen, a tall silhouette leans down over the back of the sofa toward Mia's neck
+    lines:
+    - On the monitor screen, a silhouette stood right behind my couch.
+    cast:
+    - Mia
+  - image: close-up of the ceiling corner camera above the television clicking its infrared ring on
+    hero: six red infrared LEDs ignite around the camera lens directly facing the viewer
+    lines:
+    - '[SCARE] I looked up at the corner of my ceiling, watching the ring of bulbs ignite, because...'
