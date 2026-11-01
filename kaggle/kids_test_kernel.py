@@ -69,10 +69,16 @@ try:
     import tomllib  # install every declared dependency except torch (keep Kaggle's CUDA build)
 
     deps = tomllib.load(open("/tmp/ace/pyproject.toml", "rb")).get("project", {}).get("dependencies", [])
-    keep = [d for d in deps if not d.split()[0].lower().startswith(("torch", "torchvision", "torchaudio"))]
-    r = sh(f"{sys.executable} -m pip install -q " + " ".join(f"'{d}'" for d in keep)
-           + " loguru vector_quantize_pytorch")
-    print("deps:", keep, r.stderr[-1500:], flush=True)
+    skip = ("torch", "mlx", "nano-vllm", "gradio", "fastapi", "uvicorn", "tensorboard", "lightning",
+            "lycoris", "modelscope", "python-multipart")
+    keep = [d.split(";")[0].strip() for d in deps if not d.lower().startswith(skip)]
+    failed = []
+    for d in keep + ["loguru", "vector_quantize_pytorch"]:  # one at a time: a bad pin can't block the rest
+        r = subprocess.run([sys.executable, "-m", "pip", "install", "-q", d], capture_output=True, text=True)
+        if r.returncode:
+            failed.append(d)
+    print("deps failed:", failed, flush=True)
+    report["song_deps_failed"] = failed
     sys.path.insert(0, "/tmp/ace")
     from acestep.handler import AceStepHandler
     from acestep.inference import GenerationConfig, GenerationParams, generate_music
