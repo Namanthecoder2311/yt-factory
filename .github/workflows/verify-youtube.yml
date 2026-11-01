@@ -1,0 +1,46 @@
+name: Verify YouTube tokens
+
+# Read-only check: each refresh token must belong to the right channel. Uploads nothing.
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q google-api-python-client google-auth
+      - name: Check channels
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN_HORROR: ${{ secrets.YT_REFRESH_TOKEN_HORROR }}
+          YT_REFRESH_TOKEN_KIDS: ${{ secrets.YT_REFRESH_TOKEN_KIDS }}
+        run: |
+          python - <<'EOF'
+          import os, sys
+          from google.oauth2.credentials import Credentials
+          from googleapiclient.discovery import build
+          want = {"HORROR": "@midnightaisletales", "KIDS": "@wigglotoonstv"}
+          ok = True
+          for ch, handle in want.items():
+              try:
+                  creds = Credentials(None, refresh_token=os.environ[f"YT_REFRESH_TOKEN_{ch}"],
+                                      client_id=os.environ["YT_CLIENT_ID"],
+                                      client_secret=os.environ["YT_CLIENT_SECRET"],
+                                      token_uri="https://oauth2.googleapis.com/token")
+                  me = build("youtube", "v3", credentials=creds, cache_discovery=False) \
+                      .channels().list(part="snippet,status", mine=True).execute()["items"][0]
+                  got = me["snippet"].get("customUrl", "").lower()
+                  kids = me.get("status", {}).get("madeForKids")
+                  match = got == handle
+                  ok &= match
+                  print(f"{ch}: token -> {me['snippet']['title']} ({got}), madeForKids={kids} "
+                        f"{'OK' if match else 'MISMATCH, expected ' + handle}")
+              except Exception as e:
+                  ok = False
+                  print(f"{ch}: ERROR {repr(e)[:300]}")
+          sys.exit(0 if ok else 1)
+          EOF
