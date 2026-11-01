@@ -31,6 +31,8 @@ LINE_GAP = 0.3
 SCENE_GAP = 0.5
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 CF_MODEL = "@cf/black-forest-labs/flux-1-schnell"
+KLEIN_MODEL = "@cf/black-forest-labs/flux-2-klein-4b"
+IMAGE_SIZES = {"long": (1344, 768), "short": (768, 1344)}
 # (render size, output size); rendering below output size is ~2x faster and the 1024px
 # source images hold no extra detail anyway. ffmpeg upscales and draws crisp captions.
 SIZES = {"long": ((1280, 720), (1920, 1080)), "short": ((720, 1280), (1080, 1920))}
@@ -52,18 +54,51 @@ def load(ep_path):
 
 # ---------------------------------------------------------------- images
 
-def cf_image(prompt, path):
+def cf_image(prompt, path, size=None, refs=()):
+    """FLUX.2 klein 4B (Apache 2.0): native aspect ratio and up to 4 reference images
+    for consistent characters. Falls back to FLUX.1 schnell (square only) on failure."""
     acct, token = os.environ["CF_ACCOUNT_ID"], os.environ["CF_API_TOKEN"]
-    url = f"https://api.cloudflare.com/client/v4/accounts/{acct}/ai/run/{CF_MODEL}"
+    base = f"https://api.cloudflare.com/client/v4/accounts/{acct}/ai/run/"
+    headers = {"Authorization": f"Bearer {token}"}
+    w, h = size or (1024, 1024)
     for attempt in range(5):
-        r = requests.post(url, headers={"Authorization": f"Bearer {token}"},
-                          json={"prompt": prompt, "steps": 4}, timeout=120)
-        if r.ok and r.json().get("success"):
-            path.write_bytes(base64.b64decode(r.json()["result"]["image"]))
+        if attempt < 3:
+            files = {"prompt": (None, prompt), "width": (None, str(w)), "height": (None, str(h))}
+            for i, ref in enumerate(refs[:4]):
+                files[f"input_image_{i}"] = (ref.name, ref.read_bytes(), "image/png")
+            r = requests.post(base + KLEIN_MODEL, headers=headers, files=files, timeout=180)
+        else:
+            r = requests.post(base + CF_MODEL, headers=headers,
+                              json={"prompt": prompt, "steps": 4}, timeout=120)
+        body = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
+        image = (body.get("result") or {}).get("image") if body.get("success") else None
+        if r.ok and image:
+            path.write_bytes(base64.b64decode(image))
             return
-        print(f"image attempt {attempt + 1}: {r.status_code} {r.text[:200]}", flush=True)
+        print(f"image attempt {attempt + 1}: {r.status_code} {r.text[:300]}", flush=True)
         time.sleep(6 * (attempt + 1))
     raise RuntimeError(f"Cloudflare image failed: {prompt[:80]}")
+
+
+def character_refs(ep):
+    """Make one reference portrait per character (once), reused in every scene they appear in."""
+    chars = ep.get("characters") or {}
+    folder = Path("characters") / ep.get("channel", "horror")
+    folder.mkdir(parents=True, exist_ok=True)
+    use_cf = bool(os.environ.get("CF_ACCOUNT_ID") and os.environ.get("CF_API_TOKEN"))
+    for name, spec in chars.items():
+        p = folder / f"{name}.png"
+        if p.exists():
+            continue
+        prompt = (f"character design reference, full body, plain dark grey background, "
+                  f"{spec['look']}, {ep.get('style', '')}")
+        if use_cf:
+            cf_image(prompt, p, size=(768, 768))
+        else:
+            placeholder_image(spec["look"], name, p)
+        Image.open(p).convert("RGB").resize((496, 496), Image.LANCZOS).save(p)
+        print(f"character ref: {p}", flush=True)
+    return {name: folder / f"{name}.png" for name in chars}
 
 
 def placeholder_image(prompt, label, path):
@@ -87,13 +122,18 @@ def placeholder_image(prompt, label, path):
 def story_images(ep, si):
     use_cf = bool(os.environ.get("CF_ACCOUNT_ID") and os.environ.get("CF_API_TOKEN"))
     print(f"images: {'cloudflare' if use_cf else 'placeholder'}", flush=True)
+    refs = character_refs(ep)
+    w, h = IMAGE_SIZES[ep.get("format", "long")]
     paths = []
     for k, scene in enumerate(ep["stories"][si]["scenes"]):
         p = ep["out"] / f"img_s{si}_{k:02d}.png"
         if not p.exists():
-            prompt = f"{scene['image']}, {ep.get('style', '')}".strip(", ")
+            cast = [c for c in scene.get("cast", []) if c in refs]
+            intro = " ".join(f"Image {i} shows {c}." for i, c in enumerate(cast))
+            keep = " Keep each character's face, hair and clothes exactly as in the reference images." if cast else ""
+            prompt = f"{intro} {scene['image']}.{keep} {ep.get('style', '')}".strip()
             if use_cf:
-                cf_image(prompt, p)
+                cf_image(prompt, p, size=(w, h), refs=[refs[c] for c in cast])
             else:
                 placeholder_image(scene["image"], f"S{si + 1} scene {k + 1}", p)
         paths.append(p)
@@ -531,13 +571,15 @@ def cmd_assemble(ep):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["story", "assemble", "count"])
+    ap.add_argument("command", choices=["story", "assemble", "count", "characters"])
     ap.add_argument("episode")
     ap.add_argument("--index", type=int, default=0)
     a = ap.parse_args()
     episode = load(a.episode)
     if a.command == "count":
         print(json.dumps(list(range(len(episode["stories"])))))
+    elif a.command == "characters":
+        character_refs(episode)
     elif a.command == "story":
         cmd_story(episode, a.index)
     else:

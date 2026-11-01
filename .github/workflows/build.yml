@@ -14,10 +14,24 @@ jobs:
       stories: ${{ steps.count.outputs.stories }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q pyyaml pillow numpy opencv-python-headless requests soundfile
       - id: count
-        run: |
-          python3 -m pip install -q pyyaml
-          echo "stories=$(python3 -c "import yaml,json,sys; print(json.dumps(list(range(len(yaml.safe_load(open(sys.argv[1]))['stories'])))))" '${{ inputs.episode }}')" >> "$GITHUB_OUTPUT"
+        run: echo "stories=$(python factory.py count '${{ inputs.episode }}')" >> "$GITHUB_OUTPUT"
+      # Character references are made once here so every parallel story job uses the same faces.
+      - name: Character references
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: python factory.py characters '${{ inputs.episode }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: characters
+          path: characters/
+          if-no-files-found: ignore
+          retention-days: 7
 
   story:
     needs: plan
@@ -54,6 +68,12 @@ jobs:
         with:
           path: out/**/img_*.png
           key: img-${{ hashFiles(inputs.episode) }}-${{ matrix.story }}-${{ secrets.CF_API_TOKEN != '' }}
+
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: characters
+          path: characters
 
       - name: Render story ${{ matrix.story }}
         env:
