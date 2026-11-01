@@ -1,0 +1,84 @@
+title: Time for Bed Little Friends
+channel: kids
+format: short
+hook: BEDTIME SONG! SLEEP TIGHT FRIENDS
+youtube:
+  title: 'Bedtime Lullaby for Babies! 🌙 Sweet Dreams with Bunny and Wigglo #shorts'
+  description: Wind down with this gentle bedtime lullaby. Say goodnight to the moon with Bunny, Birdie,
+    and Wigglo.
+  tags:
+  - bedtime song
+  - lullaby for babies
+  - sleep song toddlers
+  - goodnight song
+  - nursery rhymes bedtime
+  - calming kids music
+  - sweet dreams lullaby
+style: cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, Pixar quality, vertical composition, no text, no letters, no logos
+characters:
+  Wigglo:
+    look: Wigglo, an adorable round lime-green baby caterpillar with big sparkly brown eyes, rosy cheeks,
+      a happy smile, tiny antennae with yellow pom-poms and a small orange beanie hat
+  Bunny:
+    look: a fluffy pink baby bunny with long ears, big shiny eyes and a tiny white tail
+  Birdie:
+    look: a round little sky-blue baby bird with a yellow beak and soft fluffy feathers
+song:
+  caption: gentle bedtime lullaby, soothing music box, soft harp, warm acoustic guitar, calm 85 bpm, whisper-soft
+    comforting female singer, peaceful and cozy
+  lyrics: '[Verse]
+
+    Stars are shining in the deep,
+
+    time for little friends to sleep.
+
+
+    [Chorus]
+
+    Close your eyes and snuggle tight,
+
+    say to all your toys goodnight!
+
+    Moon is watching from the sky,
+
+    soft and sweet lullaby.'
+  duration: 30
+  language: en
+stories:
+- title: Time for Bed Little Friends
+  scenes:
+  - image: A cozy bedroom with a large window showing a gentle dark blue sky with twinkling stars
+    hero: Bunny yawns softly, rubs sleepy eyes, and walks slowly toward a soft pastel bed
+    lines:
+    - Stars are shining in the deep,
+    cast:
+    - Bunny
+  - image: Birdie tucking under a tiny leaf blanket in a miniature nest on the nightstand
+    hero: Birdie fluffs little feathers and snuggles down into the cozy nest
+    lines:
+    - time for little friends to sleep.
+    cast:
+    - Birdie
+  - image: Bunny climbing into the warm bed and pulling up a star-patterned quilt
+    hero: Bunny rests long ears on the pillow and closes shiny eyes peacefully
+    lines:
+    - Close your eyes and snuggle tight,
+    cast:
+    - Bunny
+  - image: Wigglo curled up on a soft fleece pillow next to a tiny teddy bear
+    hero: Wigglo tucks antennae down and curls body into a sweet sleepy round ball
+    lines:
+    - say to all your toys goodnight!
+    cast:
+    - Wigglo
+  - image: A glowing cartoon crescent moon smiling warmly through the window over all three sleeping friends
+    hero: Soft golden moonlight glimmers across the room as all three friends breathe softly in deep peaceful
+      sleep
+    lines:
+    - Moon is watching from the sky,
+    - soft and sweet lullaby.
+    cast:
+    - Bunny
+    - Birdie
+    - Wigglo

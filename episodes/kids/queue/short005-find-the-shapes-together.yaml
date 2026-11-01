@@ -1,0 +1,79 @@
+title: Find the Shapes Together
+channel: kids
+format: short
+hook: FIND SHAPES WITH BUNNY! FUN TIME
+youtube:
+  title: 'Shapes Song for Kids! 🔵 Circle Square Triangle with Bunny #shorts'
+  description: Discover circles, squares, and triangles with Bunny and Wigglo! A fun shape learning song.
+  tags:
+  - shapes song
+  - learn shapes
+  - shapes for toddlers
+  - circle square triangle
+  - toddler shapes
+  - nursery rhymes
+  - preschool learning
+style: cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, Pixar quality, vertical composition, no text, no letters, no logos
+characters:
+  Wigglo:
+    look: Wigglo, an adorable round lime-green baby caterpillar with big sparkly brown eyes, rosy cheeks,
+      a happy smile, tiny antennae with yellow pom-poms and a small orange beanie hat
+  Bunny:
+    look: a fluffy pink baby bunny with long ears, big shiny eyes and a tiny white tail
+song:
+  caption: bouncy educational nursery rhyme, playful piano, xylophone, soft bassline, 116 bpm, clear expressive
+    female singer, friendly and bright
+  lyrics: '[Verse]
+
+    Shapes are hiding all around,
+
+    waiting softly to be found!
+
+
+    [Chorus]
+
+    Round little circle rolls along,
+
+    four-sided square is big and strong!
+
+    Triangle with points of three,
+
+    shapes are fun for you and me!'
+  duration: 30
+  language: en
+stories:
+- title: Find the Shapes Together
+  scenes:
+  - image: Bunny standing in a colorful playroom with giant pastel wooden building blocks
+    hero: Bunny tips long ears curiously and peers behind a soft pastel toy box
+    lines:
+    - Shapes are hiding all around,
+    cast:
+    - Bunny
+  - image: Bunny stepping forward with paws outstretched discovering a glowing shape basket
+    hero: Bunny gasps in delight and hops twice toward a bright glowing shape
+    lines:
+    - waiting softly to be found!
+    cast:
+    - Bunny
+  - image: Wigglo pushing a smooth round blue ball across the soft rug
+    hero: Wigglo nudges the round circle ball with tiny antennae making it roll smoothly
+    lines:
+    - Round little circle rolls along,
+    cast:
+    - Wigglo
+  - image: Bunny holding up a sturdy yellow square block with four equal sides
+    hero: Bunny lifts the yellow square high overhead and balances it proudly
+    lines:
+    - four-sided square is big and strong!
+    cast:
+    - Bunny
+  - image: Bunny and Wigglo placing a red triangle roof on top of the square block
+    hero: Bunny sets the triangle down softly while Wigglo dances around the finished shape house
+    lines:
+    - Triangle with points of three,
+    - shapes are fun for you and me!
+    cast:
+    - Bunny
+    - Wigglo

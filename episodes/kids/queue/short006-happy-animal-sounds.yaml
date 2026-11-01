@@ -1,0 +1,84 @@
+title: Happy Animal Sounds
+channel: kids
+format: short
+hook: ANIMAL SOUNDS WITH BIRDIE! QUACK MOO
+youtube:
+  title: 'Animal Sounds Song for Toddlers! 🐥 Quack Moo Baa with Birdie #shorts'
+  description: Join Birdie, Bunny, and Wigglo as they visit friendly farm animals and make funny sounds!
+  tags:
+  - animal sounds song
+  - farm animals for kids
+  - toddler animal song
+  - quack moo baa
+  - nursery rhymes
+  - animal sounds toddlers
+  - baby learning
+style: cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, Pixar quality, vertical composition, no text, no letters, no logos
+characters:
+  Wigglo:
+    look: Wigglo, an adorable round lime-green baby caterpillar with big sparkly brown eyes, rosy cheeks,
+      a happy smile, tiny antennae with yellow pom-poms and a small orange beanie hat
+  Bunny:
+    look: a fluffy pink baby bunny with long ears, big shiny eyes and a tiny white tail
+  Birdie:
+    look: a round little sky-blue baby bird with a yellow beak and soft fluffy feathers
+song:
+  caption: country nursery tune, acoustic strumming, banjo accents, gentle woodblock percussion, 114 bpm,
+    playful sweet female vocals, sunny farm vibe
+  lyrics: '[Verse]
+
+    Hear the happy farm today,
+
+    listen to what friends will say!
+
+
+    [Chorus]
+
+    Duck says quack, quack, quack!
+
+    Cow says moo, moo, moo!
+
+    Sheep says baa out in the sun,
+
+    animal sounds for everyone!'
+  duration: 30
+  language: en
+stories:
+- title: Happy Animal Sounds
+  scenes:
+  - image: Birdie perching on a little wooden fence overlooking a rolling green pasture
+    hero: Birdie flutters wings gently and tilts head listening to farm sounds
+    lines:
+    - Hear the happy farm today,
+    cast:
+    - Birdie
+  - image: Bunny and Wigglo sitting on a hay bale waving at friendly farm animals nearby
+    hero: Bunny waves paws and Wigglo wiggles up and down in excitement
+    lines:
+    - listen to what friends will say!
+    cast:
+    - Bunny
+    - Wigglo
+  - image: A cute cartoon yellow duck splashing in a clean blue pond with Birdie nearby
+    hero: The little duck paddles its feet and opens its bill happily while Birdie hops along the bank
+    lines:
+    - Duck says quack, quack, quack!
+    cast:
+    - Birdie
+  - image: A gentle spotted baby cow chewing grass beside Bunny by the fence
+    hero: The cow gently swishes its tail and swishes its ears while Bunny pets its nose
+    lines:
+    - Cow says moo, moo, moo!
+    cast:
+    - Bunny
+  - image: A fluffy white sheep smiling on a green hill with Birdie, Bunny, and Wigglo dancing around
+      it
+    hero: The sheep does a little bounce while all three friends clap and dance around together
+    lines:
+    - Sheep says baa out in the sun,
+    - animal sounds for everyone!
+    cast:
+    - Birdie
+    - Bunny
+    - Wigglo
