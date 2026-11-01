@@ -22,7 +22,12 @@ NEG = ("blurry, distorted face, extra limbs, deformed hands, text, watermark, lo
        "flicker, morphing, low quality, static image")
 OUT = "/kaggle/working"
 
-jobs_path = glob.glob("/kaggle/input/*/jobs.json")[0]
+found = glob.glob("/kaggle/input/**/jobs.json", recursive=True)
+if not found:  # show what Kaggle mounted, then stop
+    for d, _, files in os.walk("/kaggle/input"):
+        print(d, files[:10])
+    raise SystemExit("jobs.json not found under /kaggle/input")
+jobs_path = found[0]
 root = os.path.dirname(jobs_path)
 jobs = json.load(open(jobs_path))
 props = torch.cuda.get_device_properties(0)
