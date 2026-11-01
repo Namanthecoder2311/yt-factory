@@ -7,6 +7,10 @@ on:
         description: "Jobs JSON path"
         required: true
         default: "tests/anim/jobs.json"
+      gpu:
+        description: "Modal GPU (A10G, L4, T4 work on free credits; L40S needs a card)"
+        required: true
+        default: "A10G"
 
 jobs:
   animate:
@@ -22,6 +26,7 @@ jobs:
         env:
           MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
           MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+          ANIM_GPU: ${{ inputs.gpu }}
         run: modal run modal_app/anim_modal.py --jobs "${{ inputs.jobs }}" --out anim_out
       - uses: actions/upload-artifact@v4
         if: always()

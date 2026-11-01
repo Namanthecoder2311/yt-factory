@@ -14,6 +14,9 @@ from pathlib import Path
 import modal
 
 MODEL = "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+# L40S/A100 need a card on file; A10G/L4/T4 run on the free credits alone.
+GPU = os.environ.get("ANIM_GPU", "A10G")
+BIG_GPU = GPU.upper().split(":")[0] in {"L40S", "A100", "A100-80GB", "H100", "H200", "B200"}
 NEG = ("blurry, distorted face, extra limbs, deformed hands, text, watermark, logo, "
        "flicker, morphing, low quality, static image")
 
@@ -22,13 +25,13 @@ image = (
     .apt_install("ffmpeg")
     .pip_install("torch", "diffusers", "transformers", "accelerate", "ftfy", "sentencepiece",
                  "imageio", "imageio-ffmpeg", "pillow")
-    .env({"HF_HOME": "/models/hf"})
+    .env({"HF_HOME": "/models/hf", "ANIM_GPU": GPU})
 )
 models = modal.Volume.from_name("yt-anim-models", create_if_missing=True)
 app = modal.App("yt-anim", image=image)
 
 
-@app.cls(gpu="L40S", volumes={"/models": models}, timeout=60 * 60, scaledown_window=60)
+@app.cls(gpu=GPU, volumes={"/models": models}, timeout=60 * 60, scaledown_window=60)
 class Animator:
     @modal.enter()
     def load(self):
@@ -38,7 +41,12 @@ class Animator:
         t = time.time()
         vae = AutoencoderKLWan.from_pretrained(MODEL, subfolder="vae", torch_dtype=torch.float32)
         self.pipe = WanImageToVideoPipeline.from_pretrained(MODEL, vae=vae,
-                                                            torch_dtype=torch.bfloat16).to("cuda")
+                                                            torch_dtype=torch.bfloat16)
+        if BIG_GPU:
+            self.pipe.to("cuda")
+        else:  # 24 GB: keep only the active model on the GPU
+            self.pipe.enable_model_cpu_offload()
+            self.pipe.vae.enable_tiling()
         models.commit()  # keep downloaded weights for the next run
         print(f"model ready in {time.time() - t:.0f}s", flush=True)
 
@@ -68,7 +76,7 @@ def main(jobs: str = "tests/anim/jobs.json", out: str = "anim_out"):
     spec = json.loads(Path(jobs).read_text())
     Path(out, "clips").mkdir(parents=True, exist_ok=True)
     animator = Animator()
-    report = {"gpu": "L40S", "clips": []}
+    report = {"gpu": GPU, "clips": []}
     for job in spec["clips"]:
         t = time.time()
         entry = {"id": job["id"]}
