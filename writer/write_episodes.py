@@ -36,7 +36,7 @@ SERIES = {
                             "rain jacket"},
         },
         "voices": {"Narrator": "am_michael", "Intercom": "am_echo", "Stranger": "am_onyx",
-                   "Mia": "af_bella", "Daniel": "am_puck"},
+                   "Mia": "af_bella", "Daniel": "am_puck", "Clerk": "am_fenrir"},
         "words": (40, 85), "scenes": (5, 7),
     },
     "kids": {
@@ -86,7 +86,7 @@ def prompt_for(channel, count, avoid):
             "drive-thrus, motels, elevators, gas stations, babysitting, apartments). Never claim a "
             "story is true. No gore, no real crimes, nothing for kids. Allowed markers at the start "
             "of a line: [SCARE], [SFX:knock], [SFX:whisper]. Dialogue lines are objects like "
-            '{"Intercom": "text"}; allowed speakers: Narrator, Intercom, Stranger, Mia, Daniel.'),
+            '{"Intercom": "text"}; allowed speakers: Narrator, Intercom, Stranger, Mia, Daniel, Clerk. Every line must be a complete sentence (never end a line with an ellipsis).'),
         "kids": (
             "Write YouTube Shorts kids songs for ages 1-5. Each teaches ONE thing (counting, "
             "colors, shapes, animals and their sounds, body parts, manners, brushing teeth, "
@@ -157,7 +157,7 @@ def ask_gemini(prompt):
     model = gemini_model(key)
     r = requests.post(
         f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-        params={"key": key}, timeout=180,
+        params={"key": key}, timeout=420,
         json={"contents": [{"parts": [{"text": prompt}]}],
               "generationConfig": {"responseMimeType": "application/json", "temperature": 1.0}})
     r.raise_for_status()
