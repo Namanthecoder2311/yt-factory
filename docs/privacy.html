@@ -39,12 +39,20 @@ YouTube channels.</p>
 GitHub repository and is used only by the owner's automated workflows. No other personal
 data is stored.</p>
 
+<h2>Data retention and deletion</h2>
+<p>The app keeps no YouTube data. The only stored item is the OAuth refresh token. To delete
+it, the owner removes the GitHub secret and revokes access at
+<a href="https://myaccount.google.com/permissions">Google security settings</a>; the app then
+has no access at all. Any API data used during an upload (such as the channel name used for the
+channel check) is discarded when the job ends and is never stored longer than 30 days. Deletion
+requests can be sent to wigglotoons.tv@gmail.com and are handled within 7 days.</p>
+
 <h2>Children</h2>
 <p>Videos intended for children are marked "Made for Kids" in line with COPPA and YouTube
 policies. The app collects no data from children or anyone else.</p>
 
 <h2>Google and YouTube</h2>
-<p>The app uses YouTube API Services. See the
+<p><strong>This app uses YouTube API Services.</strong> See the
 <a href="https://www.youtube.com/t/terms">YouTube Terms of Service</a> and the
 <a href="https://policies.google.com/privacy">Google Privacy Policy</a>. Access can be revoked
 at any time at <a href="https://myaccount.google.com/permissions">Google security settings</a>.</p>
