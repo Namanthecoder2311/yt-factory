@@ -1,0 +1,26 @@
+name: Kids 3D + song test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q -U kaggle six
+      - name: Blender render + ACE-Step song on Kaggle GPU
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: python kaggle/run_on_kaggle.py --kernel kaggle/kids_test_kernel.py --inputs kids --name kids-test kids_out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kids-test
+          path: kids_out/
+          retention-days: 3
