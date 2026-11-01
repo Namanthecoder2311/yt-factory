@@ -139,3 +139,77 @@ jobs:
             !out/**/story_*.mp4
             !out/**/clips/*.mp4
           retention-days: 3
+
+  # Fully in the cloud: a Short that passed QA is uploaded to its own channel and scheduled for
+  # the next 6 PM US Eastern (23:00 UTC). Owner authorized daily auto-publishing (CLAUDE.md).
+  publish:
+    needs: assemble
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+      YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+      YT_REFRESH_TOKEN_HORROR: ${{ secrets.YT_REFRESH_TOKEN_HORROR }}
+      YT_REFRESH_TOKEN_KIDS: ${{ secrets.YT_REFRESH_TOKEN_KIDS }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q google-api-python-client google-auth
+      - uses: actions/download-artifact@v4
+        with:
+          name: final
+          path: out
+      - name: QA gate, upload, notify
+        run: |
+          folder=$(dirname "$(ls out/*/upload.json | head -1)")
+          read -r ch title pass short <<< "$(python -c "
+          import json,sys
+          u=json.load(open('$folder/upload.json')); q=json.load(open('$folder/qa.json'))
+          print(u['channel'], u['title'].replace(' ','_'), q['pass'], q['size']==[1080,1920])")"
+          title=${title//_/ }
+          name=$([ "$ch" = kids ] && echo "Wigglo Toons" || echo "Midnight Aisle Tales")
+          if [ "$pass" != "True" ]; then
+            gh issue create --title "❌ Not posted (QA failed): $title" \
+              --body "$name — QA failed, video NOT posted. Details: $(cat $folder/qa.json)
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            exit 0
+          fi
+          if [ "$short" != "True" ]; then echo "Long video: needs owner go-ahead, not auto-posted."; exit 0; fi
+          if [ -z "$YT_REFRESH_TOKEN_HORROR$YT_REFRESH_TOKEN_KIDS" ]; then
+            echo "::warning::YouTube API secrets not set yet; skipping upload."; exit 0
+          fi
+          at=$(python -c "
+          import datetime as d
+          n=d.datetime.now(d.timezone.utc); t=n.replace(hour=23,minute=0,second=0,microsecond=0)
+          t = t if t > n + d.timedelta(minutes=30) else t + d.timedelta(days=1)
+          print(t.strftime('%Y-%m-%dT%H:%M:%SZ'))")
+          python uploader/youtube_upload.py "$folder" --channel "$ch" --publish-at "$at"
+          url=$(python -c "import json; print(json.load(open('$folder/uploaded.json'))['url'])")
+          gh issue create --title "✅ Posted: $title" \
+            --body "Channel: $name
+          Goes live: $at (6 PM US Eastern / 4:30 AM IST)
+          Link: $url
+          QA: $(cat $folder/qa.json)"
+          echo "${{ github.run_id }} $ch $url" >> published.txt
+          git config user.name "yt-factory bot"; git config user.email "actions@users.noreply.github.com"
+          git add published.txt && git commit -m "Published $title" && git pull --rebase -q && git push
+
+  notify-failure:
+    needs: [prep, story, assemble, publish]
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create -R "${{ github.repository }}" \
+            --title "⚠️ Build failed: ${{ inputs.episode }}" \
+            --body "The daily build failed, so nothing was posted. Claude will fix and re-run.
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
