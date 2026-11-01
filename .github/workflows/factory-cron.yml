@@ -1,7 +1,9 @@
 name: Factory schedule
 
-# Renders the next queued Short for each channel every day.
-# Queue: episodes/<channel>/queue/*.yaml (oldest name first). Done list: episodes/<channel>/done.txt
+# Builds the next queued Short for each channel every day.
+# Queue: episodes/<channel>/queue/*.yaml (name order). An episode is finished when the publish
+# job adds it to episodes/<channel>/done.txt. A failed episode is retried the next day and
+# skipped after 2 failures (episodes/<channel>/failed.txt), so one bad script never blocks the queue.
 on:
   schedule:
     - cron: "30 0 * * *"   # 00:30 UTC, right after Cloudflare's free image quota resets;
@@ -14,7 +16,7 @@ on:
 
 permissions:
   actions: write
-  contents: write
+  contents: read
 
 jobs:
   dispatch:
@@ -26,17 +28,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           WANT: ${{ inputs.channel || 'all' }}
         run: |
-          git config user.name "yt-factory bot"
-          git config user.email "actions@users.noreply.github.com"
           for ch in horror kids; do
             [ "$WANT" != "all" ] && [ "$WANT" != "$ch" ] && continue
-            touch "episodes/$ch/done.txt"
+            touch "episodes/$ch/done.txt" "episodes/$ch/failed.txt"
             next=$(ls episodes/$ch/queue/*.yaml 2>/dev/null | sort | while read f; do
-                     grep -qxF "$f" "episodes/$ch/done.txt" || { echo "$f"; break; }; done)
+                     grep -qxF "$f" "episodes/$ch/done.txt" && continue
+                     [ "$(grep -cxF "$f" "episodes/$ch/failed.txt")" -ge 2 ] && continue
+                     echo "$f"; break; done)
             if [ -z "$next" ]; then echo "$ch: queue empty"; continue; fi
             echo "$ch: building $next"
             gh workflow run build.yml -f episode="$next" -f animate=true
-            echo "$next" >> "episodes/$ch/done.txt"
-            git add "episodes/$ch/done.txt"
           done
-          git diff --cached --quiet || { git commit -m "Queue: mark episodes started"; git push; }

@@ -173,15 +173,25 @@ jobs:
           print(u['channel'], u['title'].replace(' ','_'), q['pass'], q['size']==[1080,1920])")"
           title=${title//_/ }
           name=$([ "$ch" = kids ] && echo "Wigglo Toons" || echo "Midnight Aisle Tales")
+          git config user.name "yt-factory bot"; git config user.email "actions@users.noreply.github.com"
+          mark() {  # record the episode in done.txt / failed.txt so the queue moves on
+            echo "${{ inputs.episode }}" >> "episodes/$ch/$1"
+            git add "episodes/$ch/$1" && git commit -qm "$2" && git pull --rebase -q && git push -q
+          }
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           if [ "$pass" != "True" ]; then
             gh issue create --title "❌ Not posted (QA failed): $title" \
-              --body "$name — QA failed, video NOT posted. Details: $(cat $folder/qa.json)
-          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              --body "$name — QA failed, video NOT posted (will retry once, then skip). Details: $(cat $folder/qa.json)
+          Run: $run_url"
+            mark failed.txt "QA failed: $title"
             exit 0
           fi
           if [ "$short" != "True" ]; then echo "Long video: needs owner go-ahead, not auto-posted."; exit 0; fi
           if [ -z "$YT_REFRESH_TOKEN_HORROR$YT_REFRESH_TOKEN_KIDS" ]; then
-            echo "::warning::YouTube API secrets not set yet; skipping upload."; exit 0
+            gh issue create --title "📦 Ready but not uploaded: $title" \
+              --body "$name — passed QA, but the YouTube API secrets are not set yet, so it was not uploaded. Download it from the run (kept 3 days): $run_url"
+            mark done.txt "Built (no upload yet): $title"
+            exit 0
           fi
           at=$(python -c "
           import datetime as d
@@ -196,8 +206,8 @@ jobs:
           Link: $url
           QA: $(cat $folder/qa.json)"
           echo "${{ github.run_id }} $ch $url" >> published.txt
-          git config user.name "yt-factory bot"; git config user.email "actions@users.noreply.github.com"
-          git add published.txt && git commit -m "Published $title" && git pull --rebase -q && git push
+          git add published.txt
+          mark done.txt "Published $title"
 
   notify-failure:
     needs: [prep, story, assemble, publish]
@@ -205,11 +215,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+      contents: write
     steps:
+      - uses: actions/checkout@v4
       - env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue create -R "${{ github.repository }}" \
             --title "⚠️ Build failed: ${{ inputs.episode }}" \
-            --body "The daily build failed, so nothing was posted. Claude will fix and re-run.
+            --body "The daily build failed, so nothing was posted. It is retried tomorrow, and skipped after 2 failures so the next Short still goes out.
           Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          ch=$(echo "${{ inputs.episode }}" | cut -d/ -f2)
+          git config user.name "yt-factory bot"; git config user.email "actions@users.noreply.github.com"
+          echo "${{ inputs.episode }}" >> "episodes/$ch/failed.txt"
+          git add "episodes/$ch/failed.txt" && git commit -qm "Build failed: ${{ inputs.episode }}" && git pull --rebase -q && git push -q
