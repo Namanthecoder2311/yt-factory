@@ -1,0 +1,51 @@
+name: Build video
+
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode YAML path, e.g. episodes/horror/test-short-001.yaml"
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: System packages
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg espeak-ng fonts-dejavu-core
+
+      - name: Python packages (CPU torch)
+        run: |
+          pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -q -r requirements.txt
+
+      - name: Cache Kokoro model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: kokoro-v1
+
+      - name: Build
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: python build.py "${{ inputs.episode }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: |
+            out/**/*.mp4
+            out/**/thumbnail.jpg
+            out/**/contact_sheet.png
+            out/**/meta.json
+            out/**/scene_*.png
+          retention-days: 14

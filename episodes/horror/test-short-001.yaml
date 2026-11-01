@@ -1,0 +1,30 @@
+title: "She Knocked From Inside My Closet"
+format: short            # short = 1080x1920 vertical, long = 1920x1080
+voice: am_michael        # Kokoro voice
+speed: 0.92
+style: >-
+  dark 2D illustrated horror, muted blue and grey palette, heavy shadows,
+  grainy texture, cinematic lighting, no text, no gore
+thumbnail:
+  scene: 4
+  text: "SHE KNOCKED FROM INSIDE"
+scenes:
+  - image: "a narrow apartment hallway at night, door number 4B, dim flickering ceiling light"
+    narration: >-
+      The girl in apartment 4B used to knock on my wall every night at 3 a.m.
+      Three knocks. Always three.
+  - image: "a tired young man lying awake in bed in a dark bedroom, staring at the wall, moonlight"
+    narration: >-
+      I complained to the landlord. He looked at me strangely and said nobody had lived in 4B
+      for two years.
+  - image: "an empty dusty apartment with an open door, sheet-covered furniture, cold moonlight"
+    narration: >-
+      So I checked. The door was unlocked. The rooms were empty. Dust on everything.
+      No footprints but mine.
+  - image: "a bedroom wall with faint scratch marks, a clock showing 3:00, deep shadows"
+    narration: >-
+      Three nights ago, the knocking stopped. I finally slept.
+  - image: "a slightly open closet door in a dark bedroom, pitch black gap, a pale hand on the edge"
+    narration: >-
+      Last night, at exactly 3 a.m., I heard it again. Three knocks.
+      But this time, they weren't coming from the wall. They were coming from inside my closet.
