@@ -1,0 +1,155 @@
+title: "3 Walmart Horror Stories Animated"
+format: long
+speed: 0.92
+voices:
+  Narrator: am_michael
+  Manager: am_fenrir
+  Intercom: am_echo
+  Stranger: am_onyx
+  Girl: af_sky
+  Customer: af_nicole
+style: >-
+  dark 2D illustrated horror, muted blue and grey palette with sickly fluorescent green,
+  heavy shadows, grainy texture, cinematic wide composition, no text, no logos, no gore
+thumbnail:
+  story: 1
+  scene: 7
+  text: "AISLE 14 AT 3AM"
+stories:
+  # ------------------------------------------------------------------ STORY 1
+  - title: "Story One. The Night Stocker"
+    scenes:
+      - image: "a huge empty supermarket at night, endless aisles, fluorescent lights, one worker with a pallet jack far away"
+        lines:
+          - "When I was nineteen, I took the overnight stocking job at the Walmart on the edge of town."
+          - "Ten p.m. to seven a.m. Four of us on the floor, one manager in the back office, and about two hundred thousand square feet of empty store."
+          - "The pay was bad. But the quiet was nice. At least, it was at first."
+      - image: "a tired store manager in a small back office lit by rows of security camera monitors"
+        lines:
+          - "My manager was a guy named Doug. On my first night he gave me one rule."
+          - {Manager: "If the overhead page calls your name after three a.m., don't answer it. Just come straight to the office."}
+          - "I laughed. He didn't."
+      - image: "a young stock worker alone in a grocery aisle at night, stacking cans, long shadows"
+        lines:
+          - "For two weeks, nothing happened. I stocked canned goods, listened to podcasts, and counted down the hours."
+          - "Then, on a Tuesday, at three seventeen in the morning, the speakers crackled."
+      - image: "ceiling speakers in a dark store, faint static glow, empty aisle below"
+        lines:
+          - {Intercom: "Daniel to aisle fourteen. Daniel. Aisle fourteen, please."}
+          - "My name is Daniel. And the voice sounded exactly like Doug."
+      - image: "a security monitor wall showing an empty aisle number fourteen in black and white"
+        lines:
+          - "I almost went. Old habits. But I remembered the rule, so I walked to the office instead."
+          - "Doug was sitting there, staring at the camera feed. He hadn't touched the intercom. The phone was on its hook."
+          - {Manager: "Did you go?"}
+          - "I shook my head. He let out a breath like he'd been holding it for an hour."
+      - image: "close-up of a black and white security monitor, a tall thin figure standing at the end of an aisle"
+        lines:
+          - "He pointed at monitor six. Aisle fourteen."
+          - "Someone was standing at the far end of it. Tall. Too tall. Arms hanging past its knees."
+          - "[SCARE] And it was looking straight up into the camera."
+      - image: "an empty supermarket aisle at night seen from the end, fluorescent light flickering, nobody there"
+        weather: fog
+        lines:
+          - "I grabbed a box cutter and walked out to look, because I was nineteen and stupid."
+          - "Aisle fourteen was empty. Just cereal boxes and a buzzing light."
+          - "[SFX:whisper] But every box on the bottom shelf had been turned around. Facing the wall."
+      - image: "a security monitor showing a worker standing in an aisle with a tall dark figure right behind him"
+        lines:
+          - "I got back to the office and Doug wouldn't look at me."
+          - "He just turned the monitor so I could see the recording of me, standing in aisle fourteen, a minute earlier."
+          - "[SCARE] The tall thing was standing right behind me. Close enough to touch my shoulder."
+      - image: "the dark exterior of a supermarket at dawn, a lone young man walking away across the parking lot"
+        lines:
+          - "I quit that morning. Doug didn't try to stop me."
+          - {Manager: "Smart kid. Most of them answer the page."}
+          - "I asked him what happens to the ones who answer. He just said, they transfer to another store."
+          - "I checked later. None of them ever did."
+
+  # ------------------------------------------------------------------ STORY 2
+  - title: "Story Two. The Man in the Parking Lot"
+    scenes:
+      - image: "a nearly empty supermarket parking lot at night in heavy rain, one car under a flickering lamp"
+        weather: rain
+        lines:
+          - "This happened to my mom, and she still won't park far from the entrance."
+          - "It was late. Almost eleven. Pouring rain. She was loading groceries into the trunk as fast as she could."
+      - image: "a man in a soaked jacket standing in the rain in a dark parking lot, face hidden in shadow"
+        weather: rain
+        lines:
+          - "A man walked up to her. Mid forties, soaked, holding a set of car keys."
+          - {Stranger: "Sorry, ma'am. I can't find my car. Could you walk with me and press the button while I look the other way? My eyes aren't great in the dark."}
+      - image: "a woman holding grocery bags in the rain, looking uneasy, the stranger standing too close"
+        weather: rain
+        lines:
+          - "It was a strange thing to ask. And he wasn't looking at her when he said it."
+          - "He kept looking past her. At her car."
+          - "She told him no, sorry, she was in a hurry. He didn't move."
+      - image: "close-up of a man's hand pressing a car key fob in the rain"
+        weather: rain
+        lines:
+          - "Instead, he started pressing the button on his own keys. Over and over."
+          - "[SFX:knock] Somewhere across the lot, a car chirped. He didn't even turn toward it."
+          - {Stranger: "Please. Just walk back inside with me. Right now. Don't open your doors."}
+      - image: "the bright entrance of a supermarket at night seen from the rainy parking lot, warm light inside"
+        weather: rain
+        lines:
+          - "Something in his voice made her do it. She left the trunk open and walked back toward the store with him."
+          - "The second they were through the doors, he grabbed the nearest employee and said one word."
+          - {Stranger: "Police."}
+      - image: "a car's back seat at night seen through a rainy window, a crouched shape on the floor"
+        weather: rain
+        lines:
+          - "He had seen it while she was loading the trunk. A shape on the floor behind the driver's seat."
+          - "[SCARE] Someone had been lying in her back seat the whole time. Waiting for her to get in."
+      - image: "red and blue police lights reflecting on a wet parking lot at night, an open car door"
+        weather: rain
+        lines:
+          - "By the time the police got there, the back door was open and the seat was empty."
+          - "There was a roll of duct tape on the floor mat. And a receipt from that same Walmart. From three hours earlier."
+          - "My mom never found out the stranger's name. But she says she prays for him every Sunday."
+
+  # ------------------------------------------------------------------ STORY 3
+  - title: "Story Three. Code Adam"
+    scenes:
+      - image: "a supermarket checkout lane at night, a bored teenage cashier, almost no customers"
+        lines:
+          - "I was a cashier, sixteen years old, working my first closing shift."
+          - "At nine forty, the overhead speakers chimed. Three tones. Then the words every employee is trained for."
+          - {Intercom: "Code Adam. Code Adam. Missing child. Girl, six years old, yellow raincoat. All doors are locked."}
+      - image: "employees walking quickly through aisles searching, worried faces, cold store lighting"
+        lines:
+          - "Everyone drops what they're doing during a Code Adam. Doors lock. You search your area. You don't stop until the child is found."
+          - "My area was the seasonal section. Halloween stuff. Plastic skeletons, fake cobwebs, rows of masks."
+      - image: "a seasonal Halloween aisle in a store at night, masks on racks, a small yellow raincoat visible behind a display"
+        lines:
+          - "I found her in under a minute. Yellow raincoat, sitting on the floor behind a stack of pumpkin buckets."
+          - {Girl: "Shh. You have to hide too. My mom said to hide until the lights go out."}
+      - image: "a small girl in a yellow raincoat looking up from the floor, face mostly in shadow, store shelves around her"
+        lines:
+          - "I knelt down and told her it was okay, her mom was looking for her, everyone was looking for her."
+          - "She shook her head."
+          - {Girl: "That's not my mom at the front. That lady is wearing my mom's coat."}
+      - image: "the front of a supermarket seen down a long aisle, a woman in a long coat standing still by the registers"
+        lines:
+          - "I looked down the main aisle toward the registers."
+          - "A woman was standing there with the manager. Long tan coat. Calm. Not crying. Not calling a name."
+          - "Just slowly turning her head, aisle by aisle, like she was counting them."
+      - image: "a woman's face in shadow at the end of a long store aisle, eyes catching the light"
+        lines:
+          - "[SCARE] When she got to my aisle, she stopped. And smiled."
+          - "The manager's radio crackled."
+          - {Manager: "Did anyone find her? Mom says she might be near seasonal."}
+      - image: "a teenage cashier holding a little girl's hand, running through a stockroom door, boxes everywhere"
+        lines:
+          - "I didn't answer. I picked the girl up and took her through the stockroom doors, to the security office, and I locked us in."
+          - "I told the guard everything. He looked at the cameras. Then he called the police. Real police, not store security."
+      - image: "police officers at a supermarket entrance at night, an empty spot where a woman stood, lights flickering"
+        lines:
+          - "When the officers came in, the woman in the tan coat was gone. Every door had been locked the entire time."
+          - "Her real mom was found the next morning, two towns over, alive, in the trunk of her own car. Her coat was missing."
+      - image: "the inside of a dark supermarket as the lights shut off aisle by aisle, deep shadows"
+        lines:
+          - "They never found the woman. But the night it happened, the lights in our store went out at closing like they always do."
+          - "[SFX:whisper] And the security guard swears that on the camera, right before it went dark, someone in a long coat was standing in seasonal."
+          - "[SCARE] Hiding. Until the lights went out."

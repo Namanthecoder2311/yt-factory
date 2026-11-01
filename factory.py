@@ -281,7 +281,7 @@ def grade(img):
     f = img.astype(np.float32)
     gray = f.mean(axis=2, keepdims=True)
     f = gray + (f - gray) * 0.7                                 # desaturate
-    f = (f - 128) * 1.12 + 120                                  # contrast, slightly darker
+    f = (f - 128) * 1.1 + 126                                   # contrast
     f *= np.array([0.92, 0.97, 1.08], dtype=np.float32)         # cold tint
     return np.clip(f, 0, 255).astype(np.uint8)
 
@@ -309,11 +309,11 @@ class Effects:
         self.rng = rng
         yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
         r = ((xx - w / 2) / (w / 2)) ** 2 + ((yy - h / 2) / (h / 2)) ** 2
-        self.vignette = np.clip(1 - 0.45 * r, 0.25, 1)[..., None].astype(np.float32)
-        self.grain = [rng.normal(0, 5, (h, w, 1)).astype(np.float32) for _ in range(6)]
-        fog = cv2.resize(rng.random((h // 16, w // 8)).astype(np.float32), (2 * w, h),
-                         interpolation=cv2.INTER_CUBIC)
-        fog = cv2.GaussianBlur(fog, (0, 0), 25)
+        self.vignette = np.clip(1 - 0.35 * r, 0.4, 1)[..., None].astype(np.float32)
+        self.grain = [rng.normal(0, 3.5, (h, w, 1)).astype(np.float32) for _ in range(6)]
+        fog = cv2.resize(rng.random((max(2, h // 120), max(2, w // 60))).astype(np.float32),
+                         (2 * w, h), interpolation=cv2.INTER_CUBIC)
+        fog = cv2.GaussianBlur(fog, (0, 0), 60)
         self.fog = ((fog - fog.min()) / (fog.max() - fog.min() + 1e-6))[..., None]
         rain = np.zeros((2 * h, w), np.float32)
         for _ in range(int(w * h / 1800)):
@@ -381,7 +381,7 @@ def render_scene(proc, lay, scene, f0, f1, t0, scares, fx, size, rng, idx):
         if weather == "fog":
             off = int(t * 25) % w
             f = fx.fog[:, off:off + w]
-            frame = frame * (1 - 0.22 * f) + 190 * 0.22 * f
+            frame = frame * (1 - 0.16 * f) + 170 * 0.16 * f
         elif weather == "rain":
             off = (fx.h - int(t * 1100) % fx.h)
             frame = frame * 0.85 + fx.rain[off:off + h] * 140
@@ -461,8 +461,8 @@ def cmd_story(ep, si):
         ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
          "-s", f"{size[0]}x{size[1]}", "-r", str(FPS), "-i", "-", "-i", str(audio),
          "-vf", f"scale={out_size[0]}:{out_size[1]}:flags=lanczos,subtitles={ass.as_posix()}",
-         "-af", "aecho=0.8:0.6:45:0.12", "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
-         "-maxrate", "6M", "-bufsize", "12M", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
+         "-af", "aecho=0.8:0.6:45:0.12", "-c:v", "libx264", "-preset", "veryfast", "-crf", "24",
+         "-maxrate", "4500k", "-bufsize", "9M", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
          "-ar", "48000", "-ac", "2", "-frames:v", str(total), "-movflags", "+faststart", str(final)],
         stdin=subprocess.PIPE)
     fx = Effects(size, seed=si)
