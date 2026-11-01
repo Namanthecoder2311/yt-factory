@@ -1,0 +1,45 @@
+name: Upload to YouTube (private)
+
+# Uploads the final video of a finished "Build video" run as PRIVATE.
+# Run only after the owner approved the video. publish_at schedules the public release.
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: "Run ID of the finished Build video run"
+        required: true
+      channel:
+        description: "horror or kids"
+        required: true
+      publish_at:
+        description: "Optional RFC3339 UTC time, e.g. 2026-11-06T23:00:00Z (6 PM US Eastern)"
+        required: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q google-api-python-client google-auth
+      - name: Download the finished video
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "${{ inputs.build_run_id }}" -n final -D out
+      - name: Upload private
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN_HORROR: ${{ secrets.YT_REFRESH_TOKEN_HORROR }}
+          YT_REFRESH_TOKEN_KIDS: ${{ secrets.YT_REFRESH_TOKEN_KIDS }}
+        run: |
+          folder=$(dirname "$(ls out/*/upload.json | head -1)")
+          args=(--channel "${{ inputs.channel }}")
+          [ -n "${{ inputs.publish_at }}" ] && args+=(--publish-at "${{ inputs.publish_at }}")
+          python uploader/youtube_upload.py "$folder" "${args[@]}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uploaded
+          path: out/*/uploaded.json

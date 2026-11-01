@@ -615,7 +615,50 @@ def cmd_assemble(ep):
     meta = {"title": ep["title"], "duration_min": round(dur / 60, 2), "stories": len(parts),
             "size_mb": round(final.stat().st_size / 1e6, 1), "file": final.name}
     (out / "meta.json").write_text(json.dumps(meta, indent=2))
+    (out / "upload.json").write_text(json.dumps(upload_pack(ep, parts), indent=2))
     print(json.dumps(meta, indent=2))
+
+
+def duration_of(path):
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of",
+                        "csv=p=0", str(path)], capture_output=True, text=True)
+    return float(r.stdout.strip() or 0)
+
+
+def stamp(sec):
+    sec = int(sec)
+    return f"{sec // 3600}:{sec % 3600 // 60:02d}:{sec % 60:02d}" if sec >= 3600 \
+        else f"{sec // 60}:{sec % 60:02d}"
+
+
+CHANNELS = {  # YouTube category ids: 24 Entertainment, 27 Education
+    "horror": {"category": "24", "kids": False,
+               "footer": "\n\n🔦 Subscribe to Midnight Aisle Tales for new animated horror stories "
+                         "every week.\n\nAll stories are fictional and original to Midnight Aisle "
+                         "Tales. Viewer discretion advised (13+).\n\n#horrorstories "
+                         "#animatedhorror #scarystories"},
+    "kids": {"category": "27", "kids": True,
+             "footer": "\n\n🎈 Subscribe to Wigglo Toons for new nursery rhymes and kids songs "
+                       "every week!\n\n🎵 All characters, songs and animation are original to "
+                       "Wigglo Toons.\n\n#nurseryrhymes #kidssongs #wigglotoons"},
+}
+
+
+def upload_pack(ep, parts):
+    """Everything YouTube needs for this video: title, description with chapters, tags, flags."""
+    ch = CHANNELS[ep.get("channel", "horror")]
+    yt = ep.get("youtube", {})
+    chapters, t = [], 0.0
+    for i, p in enumerate(parts):
+        chapters.append(f"{stamp(t)} {ep['stories'][i]['title']}")
+        t += duration_of(p)
+    desc = yt.get("description", ep["title"]).strip()
+    if len(chapters) >= 3:  # YouTube only renders chapters with 3+ entries starting at 0:00
+        desc += "\n\nChapters:\n" + "\n".join(chapters)
+    return {"title": yt.get("title", ep["title"])[:100], "description": desc + ch["footer"],
+            "tags": yt.get("tags", []), "categoryId": ch["category"],
+            "madeForKids": ch["kids"], "language": "en", "audioLanguage": "en-US",
+            "thumbnail": "thumbnail.jpg", "file": f"{ep['slug']}.mp4"}
 
 
 if __name__ == "__main__":

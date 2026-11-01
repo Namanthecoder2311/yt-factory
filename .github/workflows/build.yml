@@ -128,5 +128,6 @@ jobs:
             out/**/thumbnail.jpg
             out/**/contact_sheet.png
             out/**/meta.json
+            out/**/upload.json
             !out/**/story_*.mp4
           retention-days: 3

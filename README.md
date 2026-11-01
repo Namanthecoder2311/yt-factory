@@ -15,6 +15,8 @@ The badges update on every run. Click one to see its run history.
 | Kids 3D + song test | [![Kids test](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/kids-test.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/kids-test.yml) | Blender 3D Wigglo render + ACE-Step song on Kaggle |
 | Channel branding | [![Branding](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/branding.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/branding.yml) | Profile picture + banner from a branding YAML |
 | Niche research | [![Research](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/research.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/research.yml) | Top channels + outlier videos in a niche (yt-dlp) |
+| Factory schedule | [![Schedule](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/factory-cron.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/factory-cron.yml) | Sun + Wed: builds the next episode in each channel's queue |
+| Upload to YouTube | [![Upload](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/publish.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/publish.yml) | Private upload + scheduled publish after owner approval; **needs Google Cloud OAuth secrets** |
 | Animate on Modal | [![Modal](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/animate-modal.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/animate-modal.yml) | Faster GPU animation; **blocked until a card is on the Modal account** |
 
 ## Component status (last checked 1 Nov 2026)
@@ -33,7 +35,10 @@ The badges update on every run. Click one to see its run history.
 | 3D Wigglo in Blender on Kaggle | 🔄 First run in progress | Kids test |
 | Kids songs with vocals (ACE-Step 1.5) | 🔄 First run in progress | Kids test |
 | Modal GPU (L40S/A10G/T4) | ⛔ Blocked | Needs a payment method on Modal |
-| YouTube upload | ⏸️ Manual | Owner approves every upload |
+| Upload pack (title, description, tags, chapters, kids flag) | 🔨 Built, first real use next build | `upload.json` |
+| Episode queue + twice-weekly schedule | 🔨 Built | `episodes/<channel>/queue/` |
+| YouTube API uploader | 🔨 Built, waiting for OAuth secrets | `uploader/youtube_upload.py` |
+| Public release | ⏸️ Owner approves every video | Hard rule |
 
 ## How to run
 

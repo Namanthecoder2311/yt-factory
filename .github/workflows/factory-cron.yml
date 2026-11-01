@@ -1,0 +1,41 @@
+name: Factory schedule
+
+# Renders the next queued episode for each channel twice a week.
+# Queue: episodes/<channel>/queue/*.yaml (oldest name first). Done list: episodes/<channel>/done.txt
+on:
+  schedule:
+    - cron: "30 20 * * 0,3"   # Sun + Wed 20:30 UTC → video ready by US Mon/Thu evening
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "horror, kids or all"
+        default: "all"
+
+permissions:
+  actions: write
+  contents: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start builds for the next queued episodes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WANT: ${{ inputs.channel || 'all' }}
+        run: |
+          git config user.name "yt-factory bot"
+          git config user.email "actions@users.noreply.github.com"
+          for ch in horror kids; do
+            [ "$WANT" != "all" ] && [ "$WANT" != "$ch" ] && continue
+            touch "episodes/$ch/done.txt"
+            next=$(ls episodes/$ch/queue/*.yaml 2>/dev/null | sort | while read f; do
+                     grep -qxF "$f" "episodes/$ch/done.txt" || { echo "$f"; break; }; done)
+            if [ -z "$next" ]; then echo "$ch: queue empty"; continue; fi
+            echo "$ch: building $next"
+            gh workflow run build.yml -f episode="$next" -f animate=true
+            echo "$next" >> "episodes/$ch/done.txt"
+            git add "episodes/$ch/done.txt"
+          done
+          git diff --cached --quiet || { git commit -m "Queue: mark episodes started"; git push; }
