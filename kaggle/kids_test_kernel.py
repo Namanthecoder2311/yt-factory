@@ -80,13 +80,23 @@ try:
     print("deps failed:", failed, flush=True)
     report["song_deps_failed"] = failed
     sys.path.insert(0, "/tmp/ace")
-    os.environ["ACESTEP_DTYPE"] = "float32"  # T4 (pre-Ampere) overflows in float16 → NaN audio
+    import torch
     from acestep.handler import AceStepHandler
     from acestep.inference import GenerationConfig, GenerationParams, generate_music
     from acestep.llm_inference import LLMHandler
 
+    # ACE-Step hardcodes float16 on pre-Ampere GPUs like the T4, which overflows into NaN audio.
+    # Cast the loaded models to float32 instead (T4 has the memory for it).
     dit = AceStepHandler()
     dit.initialize_service(project_root="/tmp/ace", config_path="acestep-v15-turbo", device="cuda")
+    dit.dtype = torch.float32
+    for name in ("model", "vae", "text_encoder"):
+        m = getattr(dit, name, None)
+        if m is not None and hasattr(m, "float"):
+            m.float()
+    if isinstance(getattr(dit, "silence_latent", None), torch.Tensor):
+        dit.silence_latent = dit.silence_latent.float()
+    report["song_dtype"] = "float32-cast"
     llm = LLMHandler()
     for backend in ("pt", "transformers", "vllm"):
         try:
