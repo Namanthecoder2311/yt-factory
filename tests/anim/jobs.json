@@ -2,12 +2,12 @@
   "clips": [
     {"id": "manager", "image": "tests/anim/manager.png",
      "prompt": "2D animated horror cartoon. The tired store manager slowly raises his head and stares at the viewer with wide glowing eyes, security monitors flicker behind him, subtle camera push in",
-     "frames": 73, "steps": 30},
+     "frames": 49, "steps": 30, "width": 640, "height": 352},
     {"id": "stranger", "image": "tests/anim/stranger.png",
      "prompt": "2D animated horror cartoon. Heavy rain falls in a dark parking lot, the man in the soaked jacket slowly turns his head toward the camera, puddles ripple, streetlight flickers",
-     "frames": 73, "steps": 30},
+     "frames": 49, "steps": 30, "width": 640, "height": 352},
     {"id": "girl", "image": "tests/anim/girl.png",
      "prompt": "2D animated horror cartoon. A small child in a yellow raincoat walks slowly down the aisle away from the camera, the masks on the shelves slowly turn their heads to watch her",
-     "frames": 73, "steps": 30}
+     "frames": 49, "steps": 30, "width": 640, "height": 352}
   ]
 }
