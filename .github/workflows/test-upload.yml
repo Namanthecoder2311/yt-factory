@@ -1,0 +1,46 @@
+name: Test upload (private)
+
+# End-to-end check of the API upload path: takes an already-built video and uploads it as a
+# PRIVATE test video to the chosen channel. Nothing is published.
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: "Run ID of a finished Build video run"
+        required: true
+      channel:
+        description: "horror or kids"
+        required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q google-api-python-client google-auth
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "${{ inputs.build_run_id }}" -n final -D out
+      - name: Upload as private test
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN_HORROR: ${{ secrets.YT_REFRESH_TOKEN_HORROR }}
+          YT_REFRESH_TOKEN_KIDS: ${{ secrets.YT_REFRESH_TOKEN_KIDS }}
+        run: |
+          folder=$(dirname "$(ls out/*/*.mp4 | head -1)")
+          mp4=$(basename "$(ls $folder/*.mp4 | head -1)")
+          python - "$folder" "$mp4" "${{ inputs.channel }}" <<'EOF'
+          import json, sys
+          folder, mp4, ch = sys.argv[1:]
+          json.dump({"channel": ch, "title": "yt-factory API upload test (private)",
+                     "description": "Private test upload made by the owner's yt-factory tool.",
+                     "tags": [], "categoryId": "24" if ch == "horror" else "27",
+                     "madeForKids": ch == "kids", "language": "en", "audioLanguage": "en-US",
+                     "thumbnail": "thumbnail.jpg", "file": mp4},
+                    open(f"{folder}/upload.json", "w"), indent=2)
+          EOF
+          python uploader/youtube_upload.py "$folder" --channel "${{ inputs.channel }}"
