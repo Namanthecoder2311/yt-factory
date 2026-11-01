@@ -16,6 +16,69 @@ subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-U", "diffusers",
                 "accelerate", "ftfy", "sentencepiece", "imageio", "imageio-ffmpeg", "spandrel"],
                check=True)
 
+jobs_found = glob.glob("/kaggle/input/**/jobs.json", recursive=True)
+SONG = json.load(open(jobs_found[0])).get("song") if jobs_found else None
+
+
+def make_song(song, out_wav):
+    """Original kids song with vocals via ACE-Step 1.5 (MIT). Runs before Wan loads so both
+    fit on the T4 one after the other. ACE-Step hardcodes float16 on pre-Ampere GPUs, which
+    overflows into NaN audio, so the loaded models are cast to float32."""
+    import shutil
+    import tomllib
+
+    subprocess.run("git clone -q --depth 1 https://github.com/ACE-Step/ACE-Step-1.5.git /tmp/ace",
+                   shell=True, check=True)
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--ignore-requires-python",
+                    "--no-deps", "-e", "/tmp/ace"], check=False)
+    deps = tomllib.load(open("/tmp/ace/pyproject.toml", "rb")).get("project", {}).get("dependencies", [])
+    skip = ("torch", "mlx", "nano-vllm", "gradio", "fastapi", "uvicorn", "tensorboard", "lightning",
+            "lycoris", "modelscope", "python-multipart")
+    for d in [x.split(";")[0].strip() for x in deps if not x.lower().startswith(skip)] + [
+            "loguru", "vector_quantize_pytorch"]:
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", d], capture_output=True)
+    sys.path.insert(0, "/tmp/ace")
+    import torch
+    from acestep.handler import AceStepHandler
+    from acestep.inference import GenerationConfig, GenerationParams, generate_music
+    from acestep.llm_inference import LLMHandler
+
+    dit = AceStepHandler()
+    dit.initialize_service(project_root="/tmp/ace", config_path="acestep-v15-turbo", device="cuda")
+    dit.dtype = torch.float32
+    for name in ("model", "vae", "text_encoder"):
+        m = getattr(dit, name, None)
+        if m is not None and hasattr(m, "float"):
+            m.float()
+    if isinstance(getattr(dit, "silence_latent", None), torch.Tensor):
+        dit.silence_latent = dit.silence_latent.float()
+    llm = LLMHandler()
+    llm.initialize(checkpoint_dir="/tmp/ace/checkpoints", lm_model_path="acestep-5Hz-lm-0.6B",
+                   backend="pt", device="cuda")
+    params = GenerationParams(caption=song["caption"], lyrics=song["lyrics"],
+                              vocal_language=song.get("language", "en"),
+                              duration=song.get("duration", 30), inference_steps=8)
+    res = generate_music(dit, llm, params, GenerationConfig(batch_size=1, audio_format="wav"),
+                         save_dir="/tmp/song")
+    if not res.success:
+        raise RuntimeError(res.error)
+    shutil.copy(res.audios[0]["path"], out_wav)
+    del dit, llm
+    import gc as _gc
+    _gc.collect()
+    torch.cuda.empty_cache()
+
+
+song_report = None
+if SONG:
+    t_song = time.time()
+    try:
+        make_song(SONG, "/kaggle/working/song.wav")
+        song_report = {"ok": True, "seconds": round(time.time() - t_song)}
+    except Exception as e:
+        song_report = {"ok": False, "error": repr(e)[:800], "seconds": round(time.time() - t_song)}
+    print("song:", song_report, flush=True)
+
 import torch  # noqa: E402
 from PIL import Image  # noqa: E402
 from diffusers import AutoencoderKLWan  # noqa: E402
@@ -90,7 +153,8 @@ def upscale(frames):
 
 
 os.makedirs(f"{OUT}/clips", exist_ok=True)
-report = {"gpu": props.name, "pipeline": kind, "dtype": str(dtype), "clips": []}
+report = {"gpu": props.name, "pipeline": kind, "dtype": str(dtype), "song": song_report,
+          "clips": []}
 for job in jobs["clips"]:
     w, h = job.get("width", 640), job.get("height", 352)
     img = Image.open(os.path.join(root, job["image"])).convert("RGB")
