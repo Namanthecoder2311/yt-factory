@@ -1,0 +1,17 @@
+channel: kids
+name: "Wigglo Toons"
+tagline: "Sing • Dance • Learn"
+style: >-
+  cute 3D animated cartoon render, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, high quality kids animation style, no text, no letters, no logos
+mascot: >-
+  Wigglo, an original adorable round lime-green baby caterpillar with big sparkly brown eyes,
+  rosy cheeks, a wide happy smile, tiny antennae with yellow pom-poms and a small orange
+  beanie hat
+dp_prompt: >-
+  close-up portrait of the mascot from image 0 waving hello, centered, face filling most of
+  the frame, plain soft sky-blue background with a subtle glow
+banner_prompt: >-
+  wide panoramic sunny cartoon meadow with rolling green hills, colorful flowers, a rainbow
+  and fluffy clouds, the mascot from image 0 waving on the left side, a cute blue baby bird
+  and a pink bunny friend on the right side, large empty sky area in the middle
