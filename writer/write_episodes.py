@@ -126,11 +126,35 @@ EXAMPLE EPISODE (YAML, for format only; do not copy its story):
 Return ONLY JSON: {{"episodes": [ {count} objects shaped like {json.dumps(schema)} ]}}"""
 
 
+def gemini_model(key):
+    """Newest text 'flash' model this key can call. Google retires model names over time, so
+    pick from the live list instead of hardcoding one (GEMINI_MODEL overrides)."""
+    if os.environ.get("GEMINI_MODEL"):
+        return os.environ["GEMINI_MODEL"]
+    r = requests.get("https://generativelanguage.googleapis.com/v1beta/models",
+                     params={"key": key, "pageSize": 200}, timeout=60)
+    r.raise_for_status()
+    names = [m["name"].split("/", 1)[1] for m in r.json().get("models", [])
+             if "generateContent" in m.get("supportedGenerationMethods", [])]
+    skip = ("image", "tts", "audio", "live", "embedding", "vision", "thinking-exp", "lite")
+    flash = [n for n in names if "flash" in n and not any(s in n for s in skip)]
+    pool = flash or [n for n in names if "gemini" in n and not any(s in n for s in skip)]
+    if not pool:
+        raise RuntimeError(f"no usable Gemini model in {names[:20]}")
+
+    def version(n):
+        m = re.search(r"gemini-(\d+(?:\.\d+)?)", n)
+        return (float(m.group(1)) if m else 0, "preview" not in n and "exp" not in n, "latest" in n)
+    best = max(pool, key=version)
+    print("gemini model:", best, flush=True)
+    return best
+
+
 def ask_gemini(prompt):
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         raise RuntimeError("no GEMINI_API_KEY")
-    model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    model = gemini_model(key)
     r = requests.post(
         f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
         params={"key": key}, timeout=180,
