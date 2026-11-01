@@ -39,6 +39,8 @@ print("GPU:", gpu, flush=True)
 
 # ---------------------------------------------------------------- 1. Blender 3D render
 try:
+    if os.path.exists(f"{inputs}/skip_blender"):
+        raise RuntimeError("skipped (skip_blender flag)")
     t = time.time()
     sh(f"curl -sSL {BLENDER_URL} -o /tmp/blender.tar.xz && tar -xf /tmp/blender.tar.xz -C /tmp")
     blender = glob.glob("/tmp/blender-*/blender")[0]
@@ -60,8 +62,14 @@ try:
     t = time.time()
     song = json.load(open(f"{inputs}/song_test.json"))
     sh("git clone -q --depth 1 https://github.com/ACE-Step/ACE-Step-1.5.git /tmp/ace")
-    r = sh(f"{sys.executable} -m pip install -q -e /tmp/ace")
+    # Kaggle's Python is newer than the project's pinned version, so install while ignoring
+    # the pin, plus its requirements file if it ships one.
+    r = sh(f"{sys.executable} -m pip install -q --ignore-requires-python -e /tmp/ace")
     print(r.stdout[-1500:], r.stderr[-1500:], flush=True)
+    if os.path.exists("/tmp/ace/requirements.txt"):
+        r = sh(f"{sys.executable} -m pip install -q -r /tmp/ace/requirements.txt")
+        print(r.stderr[-1500:], flush=True)
+    sh(f"{sys.executable} -m pip install -q loguru")
     sys.path.insert(0, "/tmp/ace")
     from acestep.handler import AceStepHandler
     from acestep.inference import GenerationConfig, GenerationParams, generate_music

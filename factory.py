@@ -55,7 +55,7 @@ def load(ep_path):
 
 # ---------------------------------------------------------------- images
 
-def cf_image(prompt, path, size=None, refs=()):
+def cf_image(prompt, path, size=None, refs=(), cheap=False):
     """FLUX.2 klein 4B (Apache 2.0): native aspect ratio and up to 4 reference images
     for consistent characters. Falls back to FLUX.1 schnell (square only) on failure."""
     acct, token = os.environ["CF_ACCOUNT_ID"], os.environ["CF_API_TOKEN"]
@@ -63,7 +63,7 @@ def cf_image(prompt, path, size=None, refs=()):
     headers = {"Authorization": f"Bearer {token}"}
     w, h = size or (1024, 1024)
     for attempt in range(5):
-        if attempt < 3:
+        if attempt < 3 and not cheap:
             files = {"prompt": (None, prompt), "width": (None, str(w)), "height": (None, str(h))}
             for i, ref in enumerate(refs[:4]):
                 files[f"input_image_{i}"] = (ref.name, ref.read_bytes(), "image/png")
@@ -124,7 +124,10 @@ def story_images(ep, si):
     use_cf = bool(os.environ.get("CF_ACCOUNT_ID") and os.environ.get("CF_API_TOKEN"))
     print(f"images: {'cloudflare' if use_cf else 'placeholder'}", flush=True)
     refs = character_refs(ep)
-    w, h = IMAGE_SIZES[ep.get("format", "long")]
+    short = ep.get("format") == "short"
+    # Shorts feed Wan at 352x640, so a ~0.6 MP image is plenty; scenes without a recurring
+    # character use FLUX.1 schnell (~15x cheaper) to stay inside the free daily quota.
+    w, h = (576, 1024) if short else IMAGE_SIZES[ep.get("format", "long")]
     paths = []
     for k, scene in enumerate(ep["stories"][si]["scenes"]):
         p = ep["out"] / f"img_s{si}_{k:02d}.png"
@@ -134,7 +137,8 @@ def story_images(ep, si):
             keep = " Keep each character's face, hair and clothes exactly as in the reference images." if cast else ""
             prompt = f"{intro} {scene['image']}.{keep} {ep.get('style', '')}".strip()
             if use_cf:
-                cf_image(prompt, p, size=(w, h), refs=[refs[c] for c in cast])
+                cf_image(prompt, p, size=(w, h), refs=[refs[c] for c in cast],
+                         cheap=short and not cast)
             else:
                 placeholder_image(scene["image"], f"S{si + 1} scene {k + 1}", p)
         paths.append(p)
