@@ -4,13 +4,29 @@ on:
   workflow_dispatch:
     inputs:
       episode:
-        description: "Episode YAML path, e.g. episodes/horror/test-short-001.yaml"
+        description: "Episode YAML path, e.g. episodes/horror/test-v2-mini.yaml"
         required: true
 
 jobs:
-  build:
+  plan:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    outputs:
+      stories: ${{ steps.count.outputs.stories }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: count
+        run: |
+          python3 -m pip install -q pyyaml
+          echo "stories=$(python3 -c "import yaml,json,sys; print(json.dumps(list(range(len(yaml.safe_load(open(sys.argv[1]))['stories'])))))" '${{ inputs.episode }}')" >> "$GITHUB_OUTPUT"
+
+  story:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: true
+      matrix:
+        story: ${{ fromJson(needs.plan.outputs.stories) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -27,25 +43,55 @@ jobs:
           pip install -q torch --index-url https://download.pytorch.org/whl/cpu
           pip install -q -r requirements.txt
 
-      - name: Cache Kokoro model
+      - name: Cache models
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
-          key: kokoro-v1
+          key: hf-kokoro-depth-v1
 
-      - name: Build
+      - name: Cache generated images (saves Cloudflare quota on re-runs)
+        uses: actions/cache@v4
+        with:
+          path: out/**/img_*.png
+          key: img-${{ hashFiles(inputs.episode) }}-${{ matrix.story }}-${{ secrets.CF_API_TOKEN != '' }}
+
+      - name: Render story ${{ matrix.story }}
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: python build.py "${{ inputs.episode }}"
+        run: python factory.py story "${{ inputs.episode }}" --index ${{ matrix.story }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: output
+          name: story-${{ matrix.story }}
+          path: |
+            out/**/story_*.mp4
+            out/**/img_*.png
+          retention-days: 1
+
+  assemble:
+    needs: story
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+      - run: pip install -q pyyaml pillow numpy opencv-python-headless requests soundfile
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: story-*
+          path: out
+          merge-multiple: true
+      - run: python factory.py assemble "${{ inputs.episode }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: final
           path: |
             out/**/*.mp4
             out/**/thumbnail.jpg
             out/**/contact_sheet.png
             out/**/meta.json
-            out/**/scene_*.png
-          retention-days: 14
+            !out/**/story_*.mp4
+          retention-days: 3

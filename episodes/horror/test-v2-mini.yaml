@@ -1,0 +1,47 @@
+title: "3 Late Night Horror Stories Animated (pipeline test)"
+format: long
+speed: 0.92
+voices:
+  Narrator: am_michael
+  Clerk: af_bella
+  Stranger: am_fenrir
+style: >-
+  dark 2D illustrated horror, muted blue and grey palette, heavy shadows,
+  grainy texture, cinematic lighting, no text, no gore
+thumbnail:
+  story: 1
+  scene: 2
+  text: "DON'T OPEN THE DOOR"
+stories:
+  - title: "Story One. The Night Shift"
+    scenes:
+      - image: "an empty gas station at night, fluorescent lights, fog over the road"
+        weather: fog
+        lines:
+          - "I worked the night shift at a gas station off Route 9. Nobody came after two a.m."
+          - {Clerk: "Hello? We're closing the pumps in five minutes."}
+      - image: "a dark figure standing outside a glass door at night, backlit, silhouette"
+        lines:
+          - "[SFX:knock] Someone was knocking on the glass. But the parking lot was empty."
+          - "[SCARE] Then I saw the handprints. On the inside."
+  - title: "Story Two. The Hitchhiker"
+    scenes:
+      - image: "a lonely forest highway at night in heavy rain, car headlights"
+        weather: rain
+        lines:
+          - "The rain was so heavy I almost didn't see him standing on the shoulder."
+          - {Stranger: "Just to the next town. I won't be any trouble."}
+      - image: "the back seat of a car at night, a pale man sitting in shadow, rain on windows"
+        weather: rain
+        lines:
+          - "He never told me his name. When I looked in the mirror, the back seat was empty."
+          - "[SCARE] But the seat was still wet."
+  - title: "Story Three. The Whisper"
+    scenes:
+      - image: "a child's bedroom at night, baby monitor glowing green on a dresser"
+        lines:
+          - "[SFX:whisper] The baby monitor crackled at three a.m. Someone was whispering."
+      - image: "a dark hallway with a half open nursery door, faint green glow"
+        lines:
+          - "I ran to the nursery. My daughter was asleep. Alone."
+          - "[SCARE] The whisper came again. From the monitor in my hand. Saying my name."

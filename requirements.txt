@@ -4,3 +4,5 @@ numpy
 pillow
 pyyaml
 requests
+opencv-python-headless
+transformers
