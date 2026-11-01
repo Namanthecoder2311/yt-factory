@@ -53,6 +53,7 @@ jobs:
             characters/
             out/**/img_*.png
             out/**/clips/*.mp4
+            out/**/song.wav
             out/**/report.json
           retention-days: 2
 

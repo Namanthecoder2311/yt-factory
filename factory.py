@@ -45,11 +45,23 @@ def run(cmd):
     subprocess.run([str(c) for c in cmd], check=True)
 
 
+# Look and sound per channel: horror is cold, grainy and droning; kids is bright and clean.
+PROFILES = {
+    "horror": {"grade": "cold", "grain": True, "flicker": True, "vignette": True,
+               "ambience": True, "echo": True},
+    "kids": {"grade": "bright", "grain": False, "flicker": False, "vignette": False,
+             "ambience": False, "echo": False},
+}
+PROFILE = PROFILES["horror"]
+
+
 def load(ep_path):
+    global PROFILE
     ep = yaml.safe_load(Path(ep_path).read_text(encoding="utf-8"))
     ep["slug"] = Path(ep_path).stem
     ep["out"] = Path("out") / ep["slug"]
     ep["out"].mkdir(parents=True, exist_ok=True)
+    PROFILE = PROFILES[ep.get("channel", "horror")]
     return ep
 
 
@@ -200,6 +212,32 @@ def parse_line(line):
     return speaker, " ".join(MARKER.sub("", text).split()), bool(scare), sfx
 
 
+def song_timeline(ep, story, song_path):
+    """Kids songs: the generated song is the soundtrack; each scene gets screen time in
+    proportion to its lyric lines, and lyrics are captioned word by word across that time."""
+    audio, sr = sf.read(song_path, dtype="float32")
+    if audio.ndim > 1:
+        audio = audio.mean(axis=1)
+    if sr != SR:
+        audio = np.interp(np.arange(0, len(audio), sr / SR), np.arange(len(audio)), audio)
+    dur = min(len(audio) / SR, float(ep["song"].get("duration", 60)))
+    scenes_in = story["scenes"]
+    weights = [max(1, len(s["lines"])) for s in scenes_in]
+    unit = dur / sum(weights)
+    scenes, words, t = [], [], 0.0
+    for s, wgt in zip(scenes_in, weights):
+        span = wgt * unit
+        line_span = span / max(1, len(s["lines"]))
+        for j, line in enumerate(s["lines"]):
+            ws = (line if isinstance(line, str) else next(iter(line.values()))).split()
+            for k, w in enumerate(ws):
+                a = t + j * line_span + k * line_span / len(ws)
+                words.append([w, a, a + line_span / len(ws)])
+        scenes.append({"start": t, "end": t + span, "scene": s})
+        t += span
+    return audio[:int(dur * SR)].astype(np.float32), words, scenes, [], dur
+
+
 def story_timeline(ep, si, voices):
     """Speak every line; return narration audio, caption words, scene spans, events."""
     story = ep["stories"][si]
@@ -214,6 +252,9 @@ def story_timeline(ep, si, voices):
         t += len(wav) / SR + gap
         return start
 
+    song_path = ep["out"] / "song.wav"
+    if ep.get("song") and song_path.exists():
+        return song_timeline(ep, story, song_path)
     short = ep.get("format") == "short"
     line_gap, scene_gap = (0.12, 0.15) if short else (LINE_GAP, SCENE_GAP)  # Shorts: no dead air
     if not short:  # long videos open each story on a spoken title card
@@ -297,8 +338,9 @@ def mix_audio(narr, dur, events, path, seed):
     rng = np.random.default_rng(seed)
     n = int(dur * SR) + SR
     mix = np.zeros(n, dtype=np.float32)
-    mix[:len(narr)] += narr * 1.0
-    mix += ambience(n, rng)
+    mix[:len(narr)] += narr[:n] * 1.0
+    if PROFILE["ambience"]:
+        mix += ambience(n, rng)
     for kind, at in events:
         fx = SFX.get(kind, sfx_hit)(rng)
         s = int(max(0, at - (0.05 if kind == "scare" else 0)) * SR)
@@ -327,6 +369,9 @@ def depth_of(img):
 def grade(img):
     f = img.astype(np.float32)
     gray = f.mean(axis=2, keepdims=True)
+    if PROFILE["grade"] == "bright":                            # kids: a touch more pop
+        f = gray + (f - gray) * 1.12
+        return np.clip((f - 128) * 1.04 + 130, 0, 255).astype(np.uint8)
     f = gray + (f - gray) * 0.7                                 # desaturate
     f = (f - 128) * 1.1 + 126                                   # contrast
     f *= np.array([0.92, 0.97, 1.08], dtype=np.float32)         # cold tint
@@ -460,9 +505,12 @@ def render_scene(proc, lay, scene, f0, f1, t0, scares, fx, size, rng, idx, hero=
         elif weather == "rain":
             off = (fx.h - int(t * 1100) % fx.h)
             frame = frame * 0.85 + fx.rain[off:off + h] * 140
-        if rng.random() < 0.015:
+        if PROFILE["flicker"] and rng.random() < 0.015:
             frame *= 0.6                                       # light flicker
-        frame = frame * fx.vignette + fx.grain[i % 6]
+        if PROFILE["vignette"]:
+            frame = frame * fx.vignette
+        if PROFILE["grain"]:
+            frame = frame + fx.grain[i % 6]
         for at in scares:
             if 0 <= t - at < 0.1:
                 frame = frame * 0.55 + np.array([170, 0, 0], np.float32) * 0.45
@@ -545,7 +593,7 @@ def cmd_story(ep, si):
         ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
          "-s", f"{size[0]}x{size[1]}", "-r", str(FPS), "-i", "-", "-i", str(audio),
          "-vf", f"scale={out_size[0]}:{out_size[1]}:flags=lanczos,subtitles={ass.as_posix()}",
-         "-af", "aecho=0.8:0.6:45:0.12", "-c:v", "libx264", *quality,
+         "-af", "aecho=0.8:0.6:45:0.12" if PROFILE["echo"] else "anull", "-c:v", "libx264", *quality,
          "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
          "-ar", "48000", "-ac", "2", "-frames:v", str(total), "-movflags", "+faststart", str(final)],
         stdin=subprocess.PIPE)
@@ -590,8 +638,11 @@ def cmd_herojobs(ep, path):
             if scene.get("hero"):
                 clips.append({"id": f"s{si}_{k:02d}", "image": str(ep["out"] / f"img_s{si}_{k:02d}.png"),
                               "prompt": f"{lead} {scene['hero']}", "steps": 30, **size})
-    Path(path).write_text(json.dumps({"clips": clips}, indent=1))
-    print(f"{len(clips)} hero clips")
+    jobs = {"clips": clips}
+    if ep.get("song"):  # kids: the same Kaggle session also writes the song (ACE-Step)
+        jobs["song"] = ep["song"]
+    Path(path).write_text(json.dumps(jobs, indent=1))
+    print(f"{len(clips)} hero clips" + (" + song" if ep.get("song") else ""))
 
 
 def make_thumbnail(ep, out):

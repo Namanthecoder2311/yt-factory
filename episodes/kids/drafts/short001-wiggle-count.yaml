@@ -1,0 +1,69 @@
+title: "Wiggle and Count to Five"
+channel: kids
+format: short
+hook: "COUNT WITH WIGGLO! 1-2-3-4-5"
+youtube:
+  title: "Wiggle & Count to 5 with Wigglo! 🐛 Counting Song for Toddlers #shorts"
+  description: >-
+    Sing, wiggle and count from one to five with Wigglo and friends! A happy counting song for
+    babies, toddlers and preschoolers.
+  tags: [counting song, kids songs, nursery rhymes, toddler learning, count to 5, baby songs,
+         preschool songs, wigglo toons]
+style: >-
+  cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel
+  colors, rounded friendly shapes, Pixar quality, vertical composition, no text, no letters,
+  no logos
+characters:
+  Wigglo:
+    look: >-
+      Wigglo, an adorable round lime-green baby caterpillar with big sparkly brown eyes, rosy
+      cheeks, a happy smile, tiny antennae with yellow pom-poms and a small orange beanie hat
+  Bunny:
+    look: a fluffy pink baby bunny with long ears, big shiny eyes and a tiny white tail
+  Birdie:
+    look: a round little sky-blue baby bird with a yellow beak and soft fluffy feathers
+song:
+  caption: >-
+    cheerful children's nursery rhyme, bright ukulele, xylophone, hand claps, bouncy pop beat,
+    120 bpm, warm friendly female singer, clear simple English vocals, happy preschool song
+  lyrics: |
+    [Verse]
+    Wiggle, wiggle, little Wigglo,
+    wiggle with me, here we go!
+
+    [Chorus]
+    One, two, three, four, five,
+    Wigglo dancing, so alive!
+    Clap your hands and stomp your feet,
+    wiggle, wiggle to the beat!
+  duration: 30
+  language: en
+stories:
+  - title: "Wiggle and Count"
+    scenes:
+      - image: "Wigglo waving hello in a sunny flower meadow with a rainbow, morning light"
+        cast: [Wigglo]
+        hero: "the cute caterpillar waves happily and wiggles its body side to side, flowers sway"
+        lines:
+          - "Wiggle, wiggle, little Wigglo,"
+          - "wiggle with me, here we go!"
+      - image: "Wigglo jumping joyfully next to one big red apple on the grass, sunny meadow"
+        cast: [Wigglo]
+        hero: "the caterpillar does a bouncy happy jump next to the apple and lands softly"
+        lines:
+          - "One, two, three, four, five,"
+      - image: "Wigglo dancing with Bunny and Birdie in a colorful meadow, confetti of petals"
+        cast: [Wigglo, Bunny, Birdie]
+        hero: "the three friends dance together, the bunny hops and the bird flaps its wings happily"
+        lines:
+          - "Wigglo dancing, so alive!"
+      - image: "Wigglo, Bunny and Birdie clapping their hands together, big smiles, sunny park"
+        cast: [Wigglo, Bunny, Birdie]
+        hero: "the friends clap their hands in rhythm and smile, the bunny's ears bounce"
+        lines:
+          - "Clap your hands and stomp your feet,"
+      - image: "close-up of Wigglo laughing and wiggling to music with musical notes floating around"
+        cast: [Wigglo]
+        hero: "the caterpillar wiggles to the beat and giggles, its antennae pom-poms bounce"
+        lines:
+          - "wiggle, wiggle to the beat!"
