@@ -691,7 +691,38 @@ def cmd_assemble(ep):
             "size_mb": round(final.stat().st_size / 1e6, 1), "file": final.name}
     (out / "meta.json").write_text(json.dumps(meta, indent=2))
     (out / "upload.json").write_text(json.dumps(upload_pack(ep, parts), indent=2))
-    print(json.dumps(meta, indent=2))
+    qa = quality_check(ep, final, dur)
+    (out / "qa.json").write_text(json.dumps(qa, indent=2))
+    print(json.dumps({**meta, "qa": qa}, indent=2))
+
+
+def quality_check(ep, final, dur):
+    """Automated gate before anything is posted: length, resolution, sound, black frames,
+    hero animation coverage, and the right Made for Kids flag for the channel."""
+    short = ep.get("format") == "short"
+    probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                            "stream=width,height", "-of", "csv=p=0", str(final)],
+                           capture_output=True, text=True).stdout.strip()
+    w, h = (int(x) for x in probe.split(",")[:2]) if probe else (0, 0)
+    log = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(final), "-vf",
+                          "blackdetect=d=0.6:pic_th=0.97", "-af", "volumedetect", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    mean_db = float(re.search(r"mean_volume: (-?[\d.]+) dB", log).group(1)) \
+        if "mean_volume" in log else -99.0
+    black = sum(float(x) for x in re.findall(r"black_duration:([\d.]+)", log))
+    clips = list((ep["out"] / "clips").glob("*.mp4"))
+    scenes = sum(len(s["scenes"]) for s in ep["stories"])
+    checks = {
+        "duration_ok": (8 <= dur <= 180) if short else dur >= 60,
+        "resolution_ok": (w, h) == ((1080, 1920) if short else (1920, 1080)),
+        "audio_ok": mean_db > -40,
+        "black_frames_ok": black < 1.5,
+        "animation_ok": (len(clips) >= scenes) if short else True,
+        "kids_flag_ok": CHANNELS[ep.get("channel", "horror")]["kids"] == (ep.get("channel") == "kids"),
+    }
+    return {"pass": all(checks.values()), "checks": checks, "duration": round(dur, 1),
+            "size": [w, h], "mean_volume_db": mean_db, "black_seconds": round(black, 2),
+            "animated_scenes": f"{len(clips)}/{scenes}"}
 
 
 def duration_of(path):
@@ -730,7 +761,8 @@ def upload_pack(ep, parts):
     desc = yt.get("description", ep["title"]).strip()
     if len(chapters) >= 3:  # YouTube only renders chapters with 3+ entries starting at 0:00
         desc += "\n\nChapters:\n" + "\n".join(chapters)
-    return {"title": yt.get("title", ep["title"])[:100], "description": desc + ch["footer"],
+    return {"channel": ep.get("channel", "horror"), "slug": ep["slug"],
+            "title": yt.get("title", ep["title"])[:100], "description": desc + ch["footer"],
             "tags": yt.get("tags", []), "categoryId": ch["category"],
             "madeForKids": ch["kids"], "language": "en", "audioLanguage": "en-US",
             "thumbnail": "thumbnail.jpg", "file": f"{ep['slug']}.mp4"}

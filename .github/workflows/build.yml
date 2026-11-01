@@ -121,6 +121,10 @@ jobs:
           pattern: story-*
           path: out
           merge-multiple: true
+      - uses: actions/download-artifact@v4   # hero clips, for the QA animation check
+        with:
+          name: prep
+          path: .
       - run: python factory.py assemble "${{ inputs.episode }}"
       - uses: actions/upload-artifact@v4
         with:
@@ -131,5 +135,7 @@ jobs:
             out/**/contact_sheet.png
             out/**/meta.json
             out/**/upload.json
+            out/**/qa.json
             !out/**/story_*.mp4
+            !out/**/clips/*.mp4
           retention-days: 3
