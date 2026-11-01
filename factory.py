@@ -200,8 +200,7 @@ def lowpass(x, taps):
     return ((c[hi] - c[lo]) / (hi - lo)).astype(np.float32)
 
 
-def ambience(dur, rng):
-    n = int(dur * SR)
+def ambience(n, rng):
     brown = np.cumsum(rng.normal(0, 1, n)).astype(np.float32)
     brown -= lowpass(brown, 4801)                 # remove drift
     brown = lowpass(brown, 60)
@@ -251,7 +250,7 @@ def mix_audio(narr, dur, events, path, seed):
     n = int(dur * SR) + SR
     mix = np.zeros(n, dtype=np.float32)
     mix[:len(narr)] += narr * 1.0
-    mix[:n] += ambience(n / SR, rng)[:n]
+    mix += ambience(n, rng)
     for kind, at in events:
         fx = SFX.get(kind, sfx_hit)(rng)
         s = int(max(0, at - (0.05 if kind == "scare" else 0)) * SR)
