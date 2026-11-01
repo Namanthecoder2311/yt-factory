@@ -80,6 +80,7 @@ try:
     print("deps failed:", failed, flush=True)
     report["song_deps_failed"] = failed
     sys.path.insert(0, "/tmp/ace")
+    os.environ["ACESTEP_DTYPE"] = "float32"  # T4 (pre-Ampere) overflows in float16 → NaN audio
     from acestep.handler import AceStepHandler
     from acestep.inference import GenerationConfig, GenerationParams, generate_music
     from acestep.llm_inference import LLMHandler
