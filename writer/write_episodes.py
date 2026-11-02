@@ -126,11 +126,10 @@ EXAMPLE EPISODE (YAML, for format only; do not copy its story):
 Return ONLY JSON: {{"episodes": [ {count} objects shaped like {json.dumps(schema)} ]}}"""
 
 
-def gemini_model(key):
-    """Newest text 'flash' model this key can call. Google retires model names over time, so
-    pick from the live list instead of hardcoding one (GEMINI_MODEL overrides)."""
+def gemini_candidate_models(key):
+    """Text 'flash' models this key can call, newest first. If GEMINI_MODEL is set, returns only that."""
     if os.environ.get("GEMINI_MODEL"):
-        return os.environ["GEMINI_MODEL"]
+        return [os.environ["GEMINI_MODEL"]]
     r = requests.get("https://generativelanguage.googleapis.com/v1beta/models",
                      params={"key": key, "pageSize": 200}, timeout=60)
     r.raise_for_status()
@@ -145,23 +144,34 @@ def gemini_model(key):
     def version(n):
         m = re.search(r"gemini-(\d+(?:\.\d+)?)", n)
         return (float(m.group(1)) if m else 0, "preview" not in n and "exp" not in n, "latest" in n)
-    best = max(pool, key=version)
-    print("gemini model:", best, flush=True)
-    return best
+    return sorted(pool, key=version, reverse=True)
 
 
 def ask_gemini(prompt):
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         raise RuntimeError("no GEMINI_API_KEY")
-    model = gemini_model(key)
-    r = requests.post(
-        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-        params={"key": key}, timeout=420,
-        json={"contents": [{"parts": [{"text": prompt}]}],
-              "generationConfig": {"responseMimeType": "application/json", "temperature": 1.0}})
-    r.raise_for_status()
-    return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+    models = gemini_candidate_models(key)
+    last_err = None
+    for model in models:
+        try:
+            print("trying gemini model:", model, flush=True)
+            r = requests.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+                params={"key": key}, timeout=420,
+                json={"contents": [{"parts": [{"text": prompt}]}],
+                      "generationConfig": {"responseMimeType": "application/json", "temperature": 1.0}})
+            if r.status_code in (503, 500, 429, 404):
+                print(f"gemini {model} returned HTTP {r.status_code}, trying next candidate...", flush=True)
+                last_err = requests.HTTPError(f"{r.status_code} {r.text[:200]}")
+                continue
+            r.raise_for_status()
+            return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+        except Exception as e:
+            print(f"gemini {model} failed ({e}), trying next candidate...", flush=True)
+            last_err = e
+            continue
+    raise last_err or RuntimeError("all gemini candidate models failed")
 
 
 def ask_groq(prompt):
