@@ -1,0 +1,23 @@
+name: Kaggle log
+
+# Shows the log of a Kaggle kernel run, e.g. name "anim-short001-wiggle-count".
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Kernel name without the yt- prefix and -runner suffix"
+        required: true
+
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q kaggle six
+      - env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: python kaggle/run_on_kaggle.py --log-only --name "${{ inputs.name }}" out

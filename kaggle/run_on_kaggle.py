@@ -86,9 +86,23 @@ def wait_and_fetch(kernel, out_dir, max_hours=5.5):
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     kaggle("kernels", "output", kernel, "-p", out_dir, check=False)
     report = Path(out_dir) / "report.json"
-    print(report.read_text() if report.exists() else "no report.json (see Kaggle log above)")
+    print(report.read_text() if report.exists() else "no report.json")
     if "error" in status:
+        show_log(out_dir)
         sys.exit(1)
+
+
+def show_log(out_dir, lines=80):
+    """Print the end of the kernel's own log, so a failed run shows its real error here."""
+    for log in Path(out_dir).glob("*.log"):
+        try:
+            entries = json.loads(log.read_text(encoding="utf-8", errors="replace"))
+            text = "".join(e.get("data", "") for e in entries)
+        except ValueError:
+            text = log.read_text(encoding="utf-8", errors="replace")
+        print(f"--- end of {log.name} ---")
+        print("
+".join(text.splitlines()[-lines:]), flush=True)
 
 
 if __name__ == "__main__":
@@ -97,7 +111,12 @@ if __name__ == "__main__":
     ap.add_argument("--kernel")
     ap.add_argument("--inputs")
     ap.add_argument("--name", default="anim")
+    ap.add_argument("--log-only", action="store_true", help="only fetch and show the kernel's log")
     a = ap.parse_args()
+    if a.log_only:
+        kaggle("kernels", "output", f"{USER}/yt-{a.name}-runner", "-p", a.args[-1], check=False)
+        show_log(a.args[-1], lines=200)
+        sys.exit(0)
     if a.kernel:
         out = a.args[-1]
         dataset = upload(a.name, lambda ds: shutil.copytree(a.inputs, ds, dirs_exist_ok=True))
