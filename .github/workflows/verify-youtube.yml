@@ -39,6 +39,15 @@ jobs:
                   ok &= match
                   print(f"{ch}: token -> {me['snippet']['title']} ({got}), madeForKids={kids} "
                         f"{'OK' if match else 'MISMATCH, expected ' + handle}")
+                  # status of the latest uploads (shows whether API uploads are locked private)
+                  yt = build("youtube", "v3", credentials=creds, cache_discovery=False)
+                  ups = yt.channels().list(part="contentDetails", mine=True).execute()["items"][0] \
+                      ["contentDetails"]["relatedPlaylists"]["uploads"]
+                  ids = [i["contentDetails"]["videoId"] for i in yt.playlistItems().list(
+                      part="contentDetails", playlistId=ups, maxResults=5).execute().get("items", [])]
+                  for v in (yt.videos().list(part="snippet,status", id=",".join(ids)).execute()
+                            .get("items", []) if ids else []):
+                      print(f"  {v['id']} {v['snippet']['title'][:50]!r} status={v['status']}")
               except Exception as e:
                   ok = False
                   print(f"{ch}: ERROR {repr(e)[:300]}")
