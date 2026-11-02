@@ -206,7 +206,7 @@ jobs:
             mark done.txt "Built (no upload yet): $title"
             exit 0
           fi
-          if [ "$(cat API_APPROVED 2>/dev/null)" != "true" ]; then
+          if [ "$(tr -d "[:space:]" < API_APPROVED 2>/dev/null)" != "true" ]; then
             # Until Google's API audit passes, API uploads stay locked private for good, so the
             # Short is saved (90 days) and the schedule posts it once the audit is approved.
             echo "${{ github.run_id }} ${{ inputs.episode }}" >> "episodes/$ch/backlog.txt"

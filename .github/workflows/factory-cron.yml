@@ -38,7 +38,7 @@ jobs:
             # 10 AM US Eastern (15:00 UTC), next to the new Short that goes out at 6 PM.
             touch "episodes/$ch/backlog.txt"
             saved=$(head -1 "episodes/$ch/backlog.txt" | cut -d' ' -f1)
-            if [ "$(cat API_APPROVED)" = "true" ] && [ -n "$saved" ]; then
+            if [ "$(tr -d "[:space:]" < API_APPROVED)" = "true" ] && [ -n "$saved" ]; then
               posted=$(echo "$pubs" | jq --arg c "Publish $ch " --arg d "$today" '[.[] | select((.displayTitle|startswith($c)) and (.createdAt|startswith($d)) and .conclusion!="failure" and .conclusion!="cancelled")] | length')
               if [ "$posted" -eq 0 ]; then
                 at=$(python3 -c "
