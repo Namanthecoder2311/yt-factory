@@ -63,3 +63,62 @@ jobs:
             echo "$ch: building $next"
             gh workflow run build.yml -f episode="$next" -f animate=true
           done
+
+  # Safety net: a Short whose scheduled time has passed but is still private is made public
+  # (or the owner is told), so a posted Short never silently stays hidden.
+  check-live:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q google-api-python-client google-auth
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN_HORROR: ${{ secrets.YT_REFRESH_TOKEN_HORROR }}
+          YT_REFRESH_TOKEN_KIDS: ${{ secrets.YT_REFRESH_TOKEN_KIDS }}
+        run: |
+          python - <<'PY'
+          import datetime as d, os, subprocess
+          from google.oauth2.credentials import Credentials
+          from googleapiclient.discovery import build
+          now = d.datetime.now(d.timezone.utc)
+          for ch in ("HORROR", "KIDS"):
+              creds = Credentials(None, refresh_token=os.environ[f"YT_REFRESH_TOKEN_{ch}"],
+                                  client_id=os.environ["YT_CLIENT_ID"],
+                                  client_secret=os.environ["YT_CLIENT_SECRET"],
+                                  token_uri="https://oauth2.googleapis.com/token")
+              yt = build("youtube", "v3", credentials=creds, cache_discovery=False)
+              ups = yt.channels().list(part="contentDetails", mine=True).execute()["items"][0] \
+                  ["contentDetails"]["relatedPlaylists"]["uploads"]
+              ids = [i["contentDetails"]["videoId"] for i in yt.playlistItems().list(
+                  part="contentDetails", playlistId=ups, maxResults=10).execute().get("items", [])]
+              if not ids:
+                  continue
+              for v in yt.videos().list(part="snippet,status", id=",".join(ids)).execute()["items"]:
+                  s = v["status"]
+                  at = s.get("publishAt")
+                  if s["privacyStatus"] != "private" or not at:
+                      continue  # only Shorts this factory scheduled
+                  if d.datetime.fromisoformat(at.replace("Z", "+00:00")) > now - d.timedelta(minutes=30):
+                      continue
+                  title = v["snippet"]["title"]
+                  try:
+                      body = {"id": v["id"], "status": {"privacyStatus": "public",
+                              "embeddable": s["embeddable"], "license": s["license"],
+                              "publicStatsViewable": s["publicStatsViewable"],
+                              "selfDeclaredMadeForKids": s["selfDeclaredMadeForKids"]}}
+                      got = yt.videos().update(part="status", body=body).execute()["status"]["privacyStatus"]
+                      print(f"{ch}: {title} was still private after {at}, now {got}")
+                  except Exception as e:
+                      print(f"{ch}: could not make {title} public: {e!r}"[:400])
+                      subprocess.run(["gh", "issue", "create", "--title", f"⚠️ Still private: {title}",
+                                      "--body", f"Scheduled for {at} but still private and the factory could "
+                                      f"not make it public: https://youtu.be/{v['id']}\n{e!r}"[:1500]])
+          print("check done")
+          PY
