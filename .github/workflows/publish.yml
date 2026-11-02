@@ -1,7 +1,9 @@
-name: Upload to YouTube (private)
+name: Publish saved Short
+run-name: Publish ${{ inputs.channel }} ${{ inputs.build_run_id }}
 
-# Uploads the final video of a finished "Build video" run as PRIVATE.
-# Run only after the owner approved the video. publish_at schedules the public release.
+# Uploads the final video of a finished "Build video" run and schedules it (publish_at).
+# The Factory schedule runs this for Shorts saved in episodes/<channel>/backlog.txt once
+# Google's API audit is approved (API_APPROVED = true). It can also be run by hand.
 on:
   workflow_dispatch:
     inputs:
@@ -12,12 +14,16 @@ on:
         description: "horror or kids"
         required: true
       publish_at:
-        description: "Optional RFC3339 UTC time, e.g. 2026-11-06T23:00:00Z (6 PM US Eastern)"
+        description: "Optional RFC3339 UTC time, e.g. 2026-11-06T15:00:00Z (10 AM US Eastern)"
         required: false
 
 jobs:
   upload:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      issues: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,18 +34,30 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh run download "${{ inputs.build_run_id }}" -n final -D out
-      - name: Upload private
+      - name: Upload, record, notify
         env:
+          GH_TOKEN: ${{ github.token }}
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN_HORROR: ${{ secrets.YT_REFRESH_TOKEN_HORROR }}
           YT_REFRESH_TOKEN_KIDS: ${{ secrets.YT_REFRESH_TOKEN_KIDS }}
         run: |
+          ch="${{ inputs.channel }}"
           folder=$(dirname "$(ls out/*/upload.json | head -1)")
-          args=(--channel "${{ inputs.channel }}")
+          args=(--channel "$ch")
           [ -n "${{ inputs.publish_at }}" ] && args+=(--publish-at "${{ inputs.publish_at }}")
           python uploader/youtube_upload.py "$folder" "${args[@]}"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: uploaded
-          path: out/*/uploaded.json
+          url=$(python -c "import json; print(json.load(open('$folder/uploaded.json'))['url'])")
+          title=$(python -c "import json; print(json.load(open('$folder/upload.json'))['title'])")
+          name=$([ "$ch" = kids ] && echo "Wigglo Toons" || echo "Midnight Aisle Tales")
+          gh issue create --title "✅ Posted: $title" \
+            --body "Channel: $name
+          Goes live: ${{ inputs.publish_at || 'now (private until changed)' }}
+          Link: $url"
+          git config user.name "yt-factory bot"; git config user.email "actions@users.noreply.github.com"
+          echo "${{ inputs.build_run_id }} $ch $url" >> published.txt
+          touch "episodes/$ch/backlog.txt"
+          grep -v "^${{ inputs.build_run_id }} " "episodes/$ch/backlog.txt" > backlog.tmp || true
+          mv backlog.tmp "episodes/$ch/backlog.txt"
+          git add published.txt "episodes/$ch/backlog.txt"
+          git commit -qm "Published saved Short: $title" && git pull --rebase -q && git push -q

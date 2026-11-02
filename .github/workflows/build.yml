@@ -151,7 +151,7 @@ jobs:
             out/**/qa.json
             !out/**/story_*.mp4
             !out/**/clips/*.mp4
-          retention-days: 3
+          retention-days: 90  # saved Shorts wait here until Google's API audit is approved
 
   # Fully in the cloud: a Short that passed QA is uploaded to its own channel and scheduled for
   # the next 6 PM US Eastern (23:00 UTC). Owner authorized daily auto-publishing (CLAUDE.md).
@@ -204,6 +204,16 @@ jobs:
             gh issue create --title "📦 Ready but not uploaded: $title" \
               --body "$name — passed QA, but the YouTube API secrets are not set yet, so it was not uploaded. Download it from the run (kept 3 days): $run_url"
             mark done.txt "Built (no upload yet): $title"
+            exit 0
+          fi
+          if [ "$(cat API_APPROVED 2>/dev/null)" != "true" ]; then
+            # Until Google's API audit passes, API uploads stay locked private for good, so the
+            # Short is saved (90 days) and the schedule posts it once the audit is approved.
+            echo "${{ github.run_id }} ${{ inputs.episode }}" >> "episodes/$ch/backlog.txt"
+            git add "episodes/$ch/backlog.txt"
+            gh issue create --title "📦 Saved, waiting for Google approval: $title"               --body "$name — passed QA and is saved. It is posted automatically once the YouTube API audit is approved, nothing to do.
+          Run: $run_url"
+            mark done.txt "Saved (waiting for API approval): $title"
             exit 0
           fi
           at=$(python -c "

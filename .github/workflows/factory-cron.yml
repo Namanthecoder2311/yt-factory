@@ -31,8 +31,25 @@ jobs:
         run: |
           today=$(date -u +%Y-%m-%d)
           runs=$(gh run list -w build.yml -L 40 --json displayTitle,status,conclusion,createdAt)
+          pubs=$(gh run list -w publish.yml -L 40 --json displayTitle,status,conclusion,createdAt)
           for ch in horror kids; do
             [ "$WANT" != "all" ] && [ "$WANT" != "$ch" ] && continue
+            # After Google's API audit is approved: post one saved Short per channel per day at
+            # 10 AM US Eastern (15:00 UTC), next to the new Short that goes out at 6 PM.
+            touch "episodes/$ch/backlog.txt"
+            saved=$(head -1 "episodes/$ch/backlog.txt" | cut -d' ' -f1)
+            if [ "$(cat API_APPROVED)" = "true" ] && [ -n "$saved" ]; then
+              posted=$(echo "$pubs" | jq --arg c "Publish $ch " --arg d "$today" '[.[] | select((.displayTitle|startswith($c)) and (.createdAt|startswith($d)) and .conclusion!="failure" and .conclusion!="cancelled")] | length')
+              if [ "$posted" -eq 0 ]; then
+                at=$(python3 -c "
+          import datetime as d
+          n=d.datetime.now(d.timezone.utc); t=n.replace(hour=15,minute=0,second=0,microsecond=0)
+          t = t if t > n + d.timedelta(minutes=30) else t + d.timedelta(days=1)
+          print(t.strftime('%Y-%m-%dT%H:%M:%SZ'))")
+                echo "$ch: posting saved Short from run $saved at $at"
+                gh workflow run publish.yml -f build_run_id="$saved" -f channel="$ch" -f publish_at="$at"
+              fi
+            fi
             busy=$(echo "$runs" | jq --arg c "episodes/$ch/" '[.[] | select((.displayTitle|contains($c)) and .status!="completed")] | length')
             if [ "$busy" -gt 0 ]; then echo "$ch: a build is already running"; continue; fi
             built=$(echo "$runs" | jq --arg c "episodes/$ch/" --arg d "$today" '[.[] | select((.displayTitle|contains($c)) and .conclusion=="success" and (.createdAt|startswith($d)))] | length')
