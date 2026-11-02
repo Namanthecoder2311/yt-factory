@@ -101,8 +101,7 @@ def show_log(out_dir, lines=80):
         except ValueError:
             text = log.read_text(encoding="utf-8", errors="replace")
         print(f"--- end of {log.name} ---")
-        print("
-".join(text.splitlines()[-lines:]), flush=True)
+        print("\n".join(text.splitlines()[-lines:]), flush=True)
 
 
 if __name__ == "__main__":
