@@ -1,0 +1,75 @@
+title: Friendly Farmyard Sounds
+channel: kids
+format: short
+hook: WHAT DO THE ANIMALS SAY?
+youtube:
+  title: 'Animal Sounds Song with Wigglo & Bunny! 🐮 Duck, Cow, Sheep #shorts'
+  description: Sing and make silly animal sounds with Wigglo and Bunny! An engaging farm animal song for
+    toddlers.
+  tags:
+  - animal sounds
+  - farm animals song
+  - toddler animals
+  - moo quack baa
+  - nursery rhymes
+  - baby songs
+  - kids learning
+style: cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, Pixar quality, vertical composition, no text, no letters, no logos
+characters:
+  Wigglo:
+    look: Wigglo, an adorable round lime-green baby caterpillar with big sparkly brown eyes, rosy cheeks,
+      a happy smile, tiny antennae with yellow pom-poms and a small orange beanie hat
+  Bunny:
+    look: a fluffy pink baby bunny with long ears, big shiny eyes and a tiny white tail
+song:
+  caption: cheerful country folk nursery rhyme, bouncy banjo, acoustic guitar, rhythmic handclaps, 115
+    bpm, bright clear female vocal, fun animal noises
+  lyrics: '[Verse]
+
+    Down on the sunny farm today,
+
+    listen to what friends will say!
+
+
+    [Chorus]
+
+    Cow says moo, moo, moo!
+
+    Duck says quack, quack too!
+
+    Sheep says baa, so sweet and clear,
+
+    happy sounds for all to hear!'
+  duration: 30
+  language: en
+stories:
+- title: Friendly Farmyard Sounds
+  scenes:
+  - image: Wigglo in front of a cute red barn with a wooden fence and green pasture
+    hero: the caterpillar puts a tiny paw to ear and looks forward curiously
+    lines:
+    - Down on the sunny farm today,
+    - listen to what friends will say!
+    cast:
+    - Wigglo
+  - image: Bunny standing near a friendly spotted cow behind a low white fence
+    hero: the bunny opens mouth wide and mimics the gentle nodding motion of the cow
+    lines:
+    - Cow says moo, moo, moo!
+    cast:
+    - Bunny
+  - image: Wigglo watching a cute yellow duck paddle across a small pond
+    hero: the caterpillar flaps arms like little wings and bounces by the pond edge
+    lines:
+    - Duck says quack, quack too!
+    cast:
+    - Wigglo
+  - image: Bunny and Wigglo clapping by a fluffy white sheep on the green grass
+    hero: the bunny hops and claps paws while the caterpillar wiggles happily beside the sheep
+    lines:
+    - Sheep says baa, so sweet and clear,
+    - happy sounds for all to hear!
+    cast:
+    - Bunny
+    - Wigglo

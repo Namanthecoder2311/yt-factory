@@ -1,0 +1,74 @@
+title: Rainbow Colors Dance
+channel: kids
+format: short
+hook: LEARN BRIGHT COLORS WITH US!
+youtube:
+  title: 'Red, Yellow & Blue Color Song with Bunny! 🎨 Kids Rhymes #shorts'
+  description: Dance along to learn bright red, yellow, and blue with Bunny and Birdie! A fun color song
+    for toddlers.
+  tags:
+  - colors song
+  - learn colors
+  - red yellow blue
+  - toddler songs
+  - baby learning
+  - nursery rhymes
+  - preschool colors
+style: cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, Pixar quality, vertical composition, no text, no letters, no logos
+characters:
+  Bunny:
+    look: a fluffy pink baby bunny with long ears, big shiny eyes and a tiny white tail
+  Birdie:
+    look: a round little sky-blue baby bird with a yellow beak and soft fluffy feathers
+song:
+  caption: bright acoustic pop, happy ukulele, light percussion, sweet whistling, 118 bpm, warm expressive
+    female vocal, clear toddler lyrics
+  lyrics: '[Verse]
+
+    Colors shine up in the light,
+
+    making everything so bright!
+
+
+    [Chorus]
+
+    Red like a sweet cherry ball,
+
+    yellow sunshine warms us all!
+
+    Blue like the big sunny sky,
+
+    watch our happy colors fly!'
+  duration: 30
+  language: en
+stories:
+- title: Rainbow Colors Dance
+  scenes:
+  - image: Bunny standing in a colorful flower field with a bright soft rainbow overhead
+    hero: the bunny hops once and points up to the glowing rainbow in the sky
+    lines:
+    - Colors shine up in the light,
+    - making everything so bright!
+    cast:
+    - Bunny
+  - image: Bunny holding a glossy bright red balloon in the field
+    hero: the bunny sways gently side to side holding the floating red balloon string
+    lines:
+    - Red like a sweet cherry ball,
+    cast:
+    - Bunny
+  - image: Birdie flying under a warm glowing yellow sun in the meadow
+    hero: the bird glides smoothly downward as golden yellow sunbeams sparkle
+    lines:
+    - yellow sunshine warms us all!
+    cast:
+    - Birdie
+  - image: Bunny and Birdie dancing under a wide blue sky with floating colored ribbons
+    hero: the bunny spins around while the bird loops gracefully above in the blue sky
+    lines:
+    - Blue like the big sunny sky,
+    - watch our happy colors fly!
+    cast:
+    - Bunny
+    - Birdie

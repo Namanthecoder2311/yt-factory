@@ -1,0 +1,75 @@
+title: Spot the Simple Shapes
+channel: kids
+format: short
+hook: CAN YOU FIND THE SHAPES?
+youtube:
+  title: 'Learn Circle, Square & Triangle with Wigglo! 🔴 Shapes Song #shorts'
+  description: Discover simple shapes with Wigglo and Bunny! An upbeat shape recognition song for little
+    learners.
+  tags:
+  - shapes song
+  - learn shapes
+  - circle square triangle
+  - toddler learning
+  - kids educational
+  - preschool songs
+  - nursery rhymes
+style: cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, Pixar quality, vertical composition, no text, no letters, no logos
+characters:
+  Wigglo:
+    look: Wigglo, an adorable round lime-green baby caterpillar with big sparkly brown eyes, rosy cheeks,
+      a happy smile, tiny antennae with yellow pom-poms and a small orange beanie hat
+  Bunny:
+    look: a fluffy pink baby bunny with long ears, big shiny eyes and a tiny white tail
+song:
+  caption: playful bouncy synth pop, bright marimba, lively finger snaps, 120 bpm, cheerful energetic
+    female singer, standard American English
+  lyrics: '[Verse]
+
+    Look around and see the shapes,
+
+    round red balls and purple grapes!
+
+
+    [Chorus]
+
+    Circle, circle, round and round!
+
+    Square has four sides on the ground!
+
+    Triangle with points of three,
+
+    shapes for you and shapes for me!'
+  duration: 30
+  language: en
+stories:
+- title: Spot the Simple Shapes
+  scenes:
+  - image: Wigglo in a bright playroom surrounded by colorful soft blocks and toy balls
+    hero: the caterpillar looks around with wonder, turning body left and right
+    lines:
+    - Look around and see the shapes,
+    - round red balls and purple grapes!
+    cast:
+    - Wigglo
+  - image: Wigglo rolling a big shiny red ball in a sunny meadow
+    hero: the caterpillar pushes the round red ball so it rolls smoothly in a circle
+    lines:
+    - Circle, circle, round and round!
+    cast:
+    - Wigglo
+  - image: Bunny stacking a big bright blue square box on the grass
+    hero: the bunny taps each of the four equal sides of the blue square box with paws
+    lines:
+    - Square has four sides on the ground!
+    cast:
+    - Bunny
+  - image: Bunny and Wigglo holding a bright yellow triangle sign together in the sunny yard
+    hero: both friends point to the three sharp corners of the yellow triangle together
+    lines:
+    - Triangle with points of three,
+    - shapes for you and shapes for me!
+    cast:
+    - Bunny
+    - Wigglo

@@ -1,0 +1,75 @@
+title: Stars Are Shining Sleepy Time
+channel: kids
+format: short
+hook: TIME TO SLEEP, SWEET DREAMS!
+youtube:
+  title: 'Sweet Dreams Bedtime Lullaby with Birdie & Wigglo 🌙 #shorts'
+  description: Relax and drift off to sleep with Birdie and Wigglo. A soothing bedtime lullaby for babies
+    and toddlers.
+  tags:
+  - bedtime song
+  - lullaby for babies
+  - sleep song
+  - toddler bedtime
+  - nursery rhymes
+  - soothing baby music
+  - goodnight song
+style: cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, Pixar quality, vertical composition, no text, no letters, no logos
+characters:
+  Wigglo:
+    look: Wigglo, an adorable round lime-green baby caterpillar with big sparkly brown eyes, rosy cheeks,
+      a happy smile, tiny antennae with yellow pom-poms and a small orange beanie hat
+  Birdie:
+    look: a round little sky-blue baby bird with a yellow beak and soft fluffy feathers
+song:
+  caption: soothing bedtime lullaby, gentle music box, soft harp, warm slow cello, 80 bpm, gentle whispering
+    female singer, relaxing nursery rhyme
+  lyrics: '[Verse]
+
+    The silver moon begins to peep,
+
+    little eyes are fast asleep.
+
+
+    [Chorus]
+
+    Close your eyes and snuggle tight,
+
+    whisper soft and say goodnight.
+
+    Hush now, sleep until the sun,
+
+    dreaming time for everyone.'
+  duration: 30
+  language: en
+stories:
+- title: Stars Are Shining Sleepy Time
+  scenes:
+  - image: A cozy bedroom with a large crescent moon outside a round window, dark blue night sky
+    hero: the bird settles down inside a soft warm nest and lets out a tiny sleepy yawn
+    lines:
+    - The silver moon begins to peep,
+    - little eyes are fast asleep.
+    cast:
+    - Birdie
+  - image: Wigglo resting under a pastel leaf blanket on a soft pillow
+    hero: the caterpillar gently pulls the leaf blanket up to chin and blinks slowly
+    lines:
+    - Close your eyes and snuggle tight,
+    cast:
+    - Wigglo
+  - image: Birdie gently closing eyes in the cozy nest under soft moonlight
+    hero: the bird closes eyes slowly while tucking beak under a soft wing
+    lines:
+    - whisper soft and say goodnight.
+    cast:
+    - Birdie
+  - image: Wigglo and Birdie fast asleep with tiny glowing stars twinkling softly over their beds
+    hero: gentle breathing motion as both friends sleep peacefully surrounded by glowing stars
+    lines:
+    - Hush now, sleep until the sun,
+    - dreaming time for everyone.
+    cast:
+    - Wigglo
+    - Birdie

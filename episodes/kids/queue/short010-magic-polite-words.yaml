@@ -1,0 +1,74 @@
+title: Magic Polite Words
+channel: kids
+format: short
+hook: SAY PLEASE AND THANK YOU!
+youtube:
+  title: 'Say Please & Thank You with Birdie! 🌸 Polite Manners Song #shorts'
+  description: Learn polite words with Birdie and friends! A cheerful manners song for toddlers and preschoolers.
+  tags:
+  - manners song
+  - please and thank you
+  - kids songs
+  - toddler manners
+  - nursery rhymes
+  - polite words
+  - preschool songs
+style: cute 3D animated cartoon render for toddlers, soft studio lighting, bright cheerful pastel colors,
+  rounded friendly shapes, Pixar quality, vertical composition, no text, no letters, no logos
+characters:
+  Bunny:
+    look: a fluffy pink baby bunny with long ears, big shiny eyes and a tiny white tail
+  Birdie:
+    look: a round little sky-blue baby bird with a yellow beak and soft fluffy feathers
+song:
+  caption: sweet acoustic nursery rhyme, bright glockenspiel, gentle clapping, 110 bpm, soothing friendly
+    female vocals, clear English pronunciation
+  lyrics: '[Verse]
+
+    When we want a little treat,
+
+    kind sweet words are so sweet!
+
+
+    [Chorus]
+
+    Please, please, can I play?
+
+    Thank you, thank you, every day!
+
+    Nice polite words we share,
+
+    showing friends how much we care!'
+  duration: 30
+  language: en
+stories:
+- title: Magic Polite Words
+  scenes:
+  - image: Birdie sitting on a soft wooden picnic bench looking at a ripe red strawberry
+    hero: the bird gently tilts its head and taps its feet beside the fruit
+    lines:
+    - When we want a little treat,
+    cast:
+    - Birdie
+  - image: Bunny offering the red strawberry to Birdie in a lush green garden
+    hero: the bunny steps forward and gently offers the strawberry with a warm smile
+    lines:
+    - kind sweet words are so sweet!
+    cast:
+    - Bunny
+    - Birdie
+  - image: Birdie bobbing happily while asking politely, sunny picnic area
+    hero: the bird flutters small wings gently in place and bows head politely
+    lines:
+    - Please, please, can I play?
+    - Thank you, thank you, every day!
+    cast:
+    - Birdie
+  - image: Birdie and Bunny hugging happily on the picnic blanket with fluttering flower petals
+    hero: the bunny and bird share a soft joyful embrace together
+    lines:
+    - Nice polite words we share,
+    - showing friends how much we care!
+    cast:
+    - Bunny
+    - Birdie
