@@ -89,6 +89,9 @@ def cf_image(prompt, path, size=None, refs=(), cheap=False):
             path.write_bytes(base64.b64decode(image))
             return
         print(f"image attempt {attempt + 1}: {r.status_code} {r.text[:300]}", flush=True)
+        if "4006" in r.text:  # daily free allocation used up: retrying now cannot help
+            Path("CF_QUOTA").write_text("1")
+            raise RuntimeError("Cloudflare free daily quota used up; the schedule retries later")
         time.sleep(6 * (attempt + 1))
     raise RuntimeError(f"Cloudflare image failed: {prompt[:80]}")
 

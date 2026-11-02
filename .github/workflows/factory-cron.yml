@@ -1,13 +1,14 @@
 name: Factory schedule
 
-# Builds the next queued Short for each channel every day.
+# Builds the next queued Short for each channel, one per channel per UTC day.
 # Queue: episodes/<channel>/queue/*.yaml (name order). An episode is finished when the publish
-# job adds it to episodes/<channel>/done.txt. A failed episode is retried the next day and
+# job adds it to episodes/<channel>/done.txt. A failed episode is retried at the next slot and
 # skipped after 2 failures (episodes/<channel>/failed.txt), so one bad script never blocks the queue.
+# Runs 4 times a day: GitHub often starts scheduled runs hours late, and a build stopped by the
+# Cloudflare free image quota (not counted as a failure) is simply tried again at the next slot.
 on:
   schedule:
-    - cron: "30 0 * * *"   # 00:30 UTC, right after Cloudflare's free image quota resets;
-                           # Shorts are ready well before US evening (23:00 UTC)
+    - cron: "17 1,7,13,19 * * *"
   workflow_dispatch:
     inputs:
       channel:
@@ -28,8 +29,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           WANT: ${{ inputs.channel || 'all' }}
         run: |
+          today=$(date -u +%Y-%m-%d)
+          runs=$(gh run list -w build.yml -L 40 --json displayTitle,status,conclusion,createdAt)
           for ch in horror kids; do
             [ "$WANT" != "all" ] && [ "$WANT" != "$ch" ] && continue
+            busy=$(echo "$runs" | jq --arg c "episodes/$ch/" '[.[] | select((.displayTitle|contains($c)) and .status!="completed")] | length')
+            if [ "$busy" -gt 0 ]; then echo "$ch: a build is already running"; continue; fi
+            built=$(echo "$runs" | jq --arg c "episodes/$ch/" --arg d "$today" '[.[] | select((.displayTitle|contains($c)) and .conclusion=="success" and (.createdAt|startswith($d)))] | length')
+            if [ "$built" -gt 0 ] && [ "$WANT" = "all" ]; then echo "$ch: today's Short is already done"; continue; fi
             touch "episodes/$ch/done.txt" "episodes/$ch/failed.txt"
             next=$(ls episodes/$ch/queue/*.yaml 2>/dev/null | sort | while read f; do
                      grep -qxF "$f" "episodes/$ch/done.txt" && continue
