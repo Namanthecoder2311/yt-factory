@@ -32,8 +32,11 @@ def make_song(song, out_wav):
     subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--ignore-requires-python",
                     "--no-deps", "-e", "/tmp/ace"], check=False)
     deps = tomllib.load(open("/tmp/ace/pyproject.toml", "rb")).get("project", {}).get("dependencies", [])
+    # diffusers / transformers / huggingface_hub / accelerate stay at the versions installed
+    # above: ACE-Step's own pins replaced huggingface_hub and broke diffusers (2 Nov 2026)
     skip = ("torch", "mlx", "nano-vllm", "gradio", "fastapi", "uvicorn", "tensorboard", "lightning",
-            "lycoris", "modelscope", "python-multipart")
+            "lycoris", "modelscope", "python-multipart", "diffusers", "transformers",
+            "huggingface", "accelerate")
     for d in [x.split(";")[0].strip() for x in deps if not x.lower().startswith(skip)] + [
             "loguru", "vector_quantize_pytorch"]:
         subprocess.run([sys.executable, "-m", "pip", "install", "-q", d], capture_output=True)
@@ -78,6 +81,13 @@ if SONG:
     except Exception as e:
         song_report = {"ok": False, "error": repr(e)[:800], "seconds": round(time.time() - t_song)}
     print("song:", song_report, flush=True)
+    # a failed song must never stop the animation: repair the libraries if the song step broke them
+    if subprocess.run([sys.executable, "-c", "import diffusers.models"]).returncode != 0:
+        print("diffusers broken after the song step, reinstalling", flush=True)
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-U", "huggingface_hub",
+                        "diffusers", "transformers", "accelerate"], check=True)
+        for mod in [m for m in sys.modules if m.split(".")[0] in ("diffusers", "huggingface_hub")]:
+            del sys.modules[mod]
 
 import torch  # noqa: E402
 from PIL import Image  # noqa: E402
