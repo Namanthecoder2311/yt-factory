@@ -106,19 +106,37 @@ jobs:
                   part="contentDetails", playlistId=ups, maxResults=10).execute().get("items", [])]
               if not ids:
                   continue
+              kids = ch == "KIDS"
               for v in yt.videos().list(part="snippet,status", id=",".join(ids)).execute()["items"]:
                   s = v["status"]
+                  title = v["snippet"]["title"]
+                  if s.get("selfDeclaredMadeForKids") != kids or s.get("madeForKids") != kids:
+                      # audience must match the channel: Wigglo Toons is Made for Kids (COPPA)
+                      fix = {"privacyStatus": s["privacyStatus"], "embeddable": s["embeddable"],
+                             "license": s["license"], "publicStatsViewable": s["publicStatsViewable"],
+                             "selfDeclaredMadeForKids": kids}
+                      if s.get("publishAt"):
+                          fix["publishAt"] = s["publishAt"]
+                      try:
+                          s = yt.videos().update(part="status", body={"id": v["id"], "status": fix}).execute()["status"]
+                          print(f"{ch}: {title} made-for-kids set to {kids}, now {s.get('madeForKids')}")
+                      except Exception as e:
+                          s["madeForKids"] = None
+                          print(f"{ch}: could not set made-for-kids on {title}: {e!r}"[:400])
+                      if s.get("madeForKids") != kids:
+                          subprocess.run(["gh", "issue", "create", "--title", f"⚠️ Wrong audience setting: {title}",
+                                          "--body", f"Made for Kids should be {kids} but is {s.get('madeForKids')} and "
+                                          f"the factory could not fix it. Set it in YouTube Studio: https://youtu.be/{v['id']}"])
                   at = s.get("publishAt")
                   if s["privacyStatus"] != "private" or not at:
                       continue  # only Shorts this factory scheduled
                   if d.datetime.fromisoformat(at.replace("Z", "+00:00")) > now - d.timedelta(minutes=30):
                       continue
-                  title = v["snippet"]["title"]
                   try:
                       body = {"id": v["id"], "status": {"privacyStatus": "public",
                               "embeddable": s["embeddable"], "license": s["license"],
                               "publicStatsViewable": s["publicStatsViewable"],
-                              "selfDeclaredMadeForKids": s["selfDeclaredMadeForKids"]}}
+                              "selfDeclaredMadeForKids": kids}}
                       got = yt.videos().update(part="status", body=body).execute()["status"]["privacyStatus"]
                       print(f"{ch}: {title} was still private after {at}, now {got}")
                   except Exception as e:
