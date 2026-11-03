@@ -118,7 +118,9 @@ jobs:
                       if s.get("publishAt"):
                           fix["publishAt"] = s["publishAt"]
                       try:
-                          s = yt.videos().update(part="status", body={"id": v["id"], "status": fix}).execute()["status"]
+                          yt.videos().update(part="status", body={"id": v["id"], "status": fix}).execute()
+                          # the update reply leaves out madeForKids, so read it back
+                          s = yt.videos().list(part="status", id=v["id"]).execute()["items"][0]["status"]
                           print(f"{ch}: {title} made-for-kids set to {kids}, now {s.get('madeForKids')}")
                       except Exception as e:
                           s["madeForKids"] = None

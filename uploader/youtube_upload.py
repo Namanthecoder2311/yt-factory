@@ -60,6 +60,20 @@ def main(folder, channel, publish_at=None, expect_handle=None):
             print(f"uploaded {prog.progress() * 100:.0f}%", flush=True)
     vid = resp["id"]
     print("video id:", vid, flush=True)
+    # YouTube ignored selfDeclaredMadeForKids on insert for the first Wigglo Toons Shorts, so the
+    # audience is checked and, if needed, set again before the Short goes live
+    got = yt.videos().list(part="status", id=vid).execute()["items"][0]["status"]
+    if got.get("madeForKids") != pack["madeForKids"]:
+        fix = {k: got[k] for k in ("privacyStatus", "embeddable", "license", "publicStatsViewable")}
+        fix["selfDeclaredMadeForKids"] = pack["madeForKids"]
+        if publish_at:
+            fix["publishAt"] = publish_at
+        yt.videos().update(part="status", body={"id": vid, "status": fix}).execute()
+        got = yt.videos().list(part="status", id=vid).execute()["items"][0]["status"]
+        print("made-for-kids set again, now:", got.get("madeForKids"), flush=True)
+        if got.get("madeForKids") != pack["madeForKids"]:
+            sys.exit(f"audience setting is {got.get('madeForKids')}, expected {pack['madeForKids']}: "
+                     f"fix it in YouTube Studio for https://youtu.be/{vid}")
     thumb = folder / pack["thumbnail"]
     if thumb.exists():
         try:  # custom thumbnails need a phone-verified channel
