@@ -174,17 +174,40 @@ def ask_gemini(prompt):
     raise last_err or RuntimeError("all gemini candidate models failed")
 
 
+def groq_candidate_models(key):
+    """Chat models this key can call, preferred ones first. Groq retires model names, and a
+    fixed name answered 404 on 2 Nov 2026, so the list comes from the API each time."""
+    if os.environ.get("GROQ_MODEL"):
+        return [os.environ["GROQ_MODEL"]]
+    r = requests.get("https://api.groq.com/openai/v1/models", timeout=60,
+                     headers={"Authorization": f"Bearer {key}"})
+    r.raise_for_status()
+    skip = ("whisper", "guard", "tts", "playai", "distil", "compound", "prompt")
+    names = [m["id"] for m in r.json().get("data", [])
+             if m.get("active", True) and not any(s in m["id"].lower() for s in skip)]
+    prefer = ("llama-3.3-70b", "gpt-oss-120b", "kimi-k2", "llama-4", "qwen", "gpt-oss-20b")
+    rank = lambda n: next((i for i, p in enumerate(prefer) if p in n), len(prefer))
+    if not names:
+        raise RuntimeError("no usable Groq chat model")
+    return sorted(names, key=rank)
+
+
 def ask_groq(prompt):
     key = os.environ.get("GROQ_API_KEY")
     if not key:
         raise RuntimeError("no GROQ_API_KEY")
-    r = requests.post("https://api.groq.com/openai/v1/chat/completions", timeout=180,
-                      headers={"Authorization": f"Bearer {key}"},
-                      json={"model": os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile"),
-                            "messages": [{"role": "user", "content": prompt}],
-                            "response_format": {"type": "json_object"}, "temperature": 1.0})
-    r.raise_for_status()
-    return r.json()["choices"][0]["message"]["content"]
+    last_err = None
+    for model in groq_candidate_models(key)[:4]:
+        print("trying groq model:", model, flush=True)
+        r = requests.post("https://api.groq.com/openai/v1/chat/completions", timeout=180,
+                          headers={"Authorization": f"Bearer {key}"},
+                          json={"model": model, "messages": [{"role": "user", "content": prompt}],
+                                "response_format": {"type": "json_object"}, "temperature": 1.0})
+        if r.ok:
+            return r.json()["choices"][0]["message"]["content"]
+        print(f"groq {model} returned HTTP {r.status_code}: {r.text[:200]}", flush=True)
+        last_err = requests.HTTPError(f"{r.status_code} {r.text[:200]}")
+    raise last_err or RuntimeError("all groq candidate models failed")
 
 
 def line_text(line):
@@ -259,11 +282,11 @@ def next_number(channel):
     return max(nums, default=0) + 1
 
 
-def main(channel, count):
+def main(channel, count, only=None, dry_run=False):
     avoid = existing_titles(channel)
     prompt = prompt_for(channel, count, avoid)
     raw = None
-    for ask in (ask_gemini, ask_groq):
+    for ask in [f for f in (ask_gemini, ask_groq) if not only or f.__name__ == f"ask_{only}"]:
         for attempt in range(2):
             try:
                 raw = ask(prompt)
@@ -286,6 +309,10 @@ def main(channel, count):
             continue
         slug = re.sub(r"[^a-z0-9]+", "-", ep["title"].lower()).strip("-")[:30]
         path = queue / f"short{n:03d}-{slug}.yaml"
+        if dry_run:  # test an LLM without adding to the queue
+            print("valid (dry run, not saved):", ep["title"], flush=True)
+            n, written = n + 1, written + 1
+            continue
         path.write_text(to_yaml(channel, ep), encoding="utf-8")
         avoid.append(ep["title"])
         print("queued", path.relative_to(ROOT), flush=True)
@@ -299,5 +326,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("channel", choices=["horror", "kids"])
     ap.add_argument("--count", type=int, default=7)
+    ap.add_argument("--only", choices=["gemini", "groq"], help="use just this LLM")
+    ap.add_argument("--dry-run", action="store_true", help="validate scripts but do not save them")
     a = ap.parse_args()
-    main(a.channel, a.count)
+    main(a.channel, a.count, a.only, a.dry_run)

@@ -10,6 +10,9 @@ on:
       count:
         description: "Scripts per channel"
         default: "7"
+      test_llm:
+        description: "Test one LLM without saving scripts: gemini or groq (empty = normal run)"
+        default: ""
 
 permissions:
   contents: write
@@ -34,6 +37,10 @@ jobs:
             touch "episodes/$ch/done.txt"
             waiting=$(ls episodes/$ch/queue/*.yaml 2>/dev/null | while read f; do grep -qxF "$f" "episodes/$ch/done.txt" || echo "$f"; done | wc -l)
             echo "$ch: $waiting waiting"
+            if [ -n "${{ inputs.test_llm }}" ]; then
+              python writer/write_episodes.py "$ch" --count 2 --only "${{ inputs.test_llm }}" --dry-run
+              continue
+            fi
             if [ "$waiting" -lt 4 ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
               python writer/write_episodes.py "$ch" --count "${{ inputs.count || 7 }}" || \
                 gh issue create --title "⚠️ Script writer failed for $ch" \
