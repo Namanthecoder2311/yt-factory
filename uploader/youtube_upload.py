@@ -71,9 +71,8 @@ def main(folder, channel, publish_at=None, expect_handle=None):
         yt.videos().update(part="status", body={"id": vid, "status": fix}).execute()
         got = yt.videos().list(part="status", id=vid).execute()["items"][0]["status"]
         print("made-for-kids set again, now:", got.get("madeForKids"), flush=True)
-        if got.get("madeForKids") != pack["madeForKids"]:
-            sys.exit(f"audience setting is {got.get('madeForKids')}, expected {pack['madeForKids']}: "
-                     f"fix it in YouTube Studio for https://youtu.be/{vid}")
+        # no exit here: the video is already up, and stopping would leave it unrecorded and
+        # posted twice. The schedule's check retries the setting and tells the owner.
     thumb = folder / pack["thumbnail"]
     if thumb.exists():
         try:  # custom thumbnails need a phone-verified channel
