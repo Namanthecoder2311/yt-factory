@@ -24,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history, for the date of the last done.txt change
       - name: Start builds for the next queued episodes
         env:
           GH_TOKEN: ${{ github.token }}
@@ -53,7 +55,11 @@ jobs:
             busy=$(echo "$runs" | jq --arg c "episodes/$ch/" '[.[] | select((.displayTitle|contains($c)) and .status!="completed")] | length')
             if [ "$busy" -gt 0 ]; then echo "$ch: a build is already running"; continue; fi
             built=$(echo "$runs" | jq --arg c "episodes/$ch/" --arg d "$today" '[.[] | select((.displayTitle|contains($c)) and .conclusion=="success" and (.createdAt|startswith($d)))] | length')
-            if [ "$built" -gt 0 ] && [ "$WANT" = "all" ]; then echo "$ch: today's Short is already done"; continue; fi
+            # done.txt changes only when a Short was posted (or saved), even if a later step of
+            # that run failed, so its last commit date tells whether today's Short is out
+            last=$(git log -1 --format=%cs -- "episodes/$ch/done.txt")
+            if { [ "$built" -gt 0 ] || [ "$last" = "$today" ]; } && [ "$WANT" = "all" ]; then
+              echo "$ch: today's Short is already done"; continue; fi
             touch "episodes/$ch/done.txt" "episodes/$ch/failed.txt"
             next=$(ls episodes/$ch/queue/*.yaml 2>/dev/null | sort | while read f; do
                      grep -qxF "$f" "episodes/$ch/done.txt" && continue

@@ -55,9 +55,9 @@ jobs:
           Goes live: ${{ inputs.publish_at || 'now (private until changed)' }}
           Link: $url"
           git config user.name "yt-factory bot"; git config user.email "actions@users.noreply.github.com"
-          echo "${{ inputs.build_run_id }} $ch $url" >> published.txt
+          echo "${{ inputs.build_run_id }} $ch $url" >> "episodes/$ch/published.txt"
           touch "episodes/$ch/backlog.txt"
           grep -v "^${{ inputs.build_run_id }} " "episodes/$ch/backlog.txt" > backlog.tmp || true
           mv backlog.tmp "episodes/$ch/backlog.txt"
-          git add published.txt "episodes/$ch/backlog.txt"
+          git add "episodes/$ch/published.txt" "episodes/$ch/backlog.txt"
           git commit -qm "Published saved Short: $title" && git pull --rebase -q && git push -q

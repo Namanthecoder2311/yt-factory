@@ -1,2 +1,0 @@
-episodes/kids/queue/short001-wiggle-count.yaml
-episodes/kids/queue/short001-wiggle-count.yaml

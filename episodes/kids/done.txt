@@ -1,1 +1,2 @@
 episodes/kids/queue/short002-wash-wash-wash-your-hands.yaml
+episodes/kids/queue/short001-wiggle-count.yaml

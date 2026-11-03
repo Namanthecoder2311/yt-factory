@@ -189,7 +189,8 @@ jobs:
           git config user.name "yt-factory bot"; git config user.email "actions@users.noreply.github.com"
           mark() {  # record the episode in done.txt / failed.txt so the queue moves on
             echo "${{ inputs.episode }}" >> "episodes/$ch/$1"
-            git add "episodes/$ch/$1" && git commit -qm "$2" && git pull --rebase -q && git push -q
+            git add "episodes/$ch/$1" && git commit -qm "$2"
+            for i in 1 2 3 4 5; do git pull --rebase -q && git push -q && break; sleep $((i * 5)); done
           }
           run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           if [ "$pass" != "True" ]; then
@@ -228,8 +229,8 @@ jobs:
           Goes live: $at (6 PM US Eastern / 4:30 AM IST)
           Link: $url
           QA: $(cat $folder/qa.json)"
-          echo "${{ github.run_id }} $ch $url" >> published.txt
-          git add published.txt
+          echo "${{ github.run_id }} $ch $url" >> "episodes/$ch/published.txt"
+          git add "episodes/$ch/published.txt"
           mark done.txt "Published $title"
 
   notify-failure:
