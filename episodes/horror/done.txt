@@ -1,3 +1,4 @@
 episodes/horror/queue/short001-intercom.yaml
 episodes/horror/queue/short002-backseat.yaml
 episodes/horror/queue/short003-drive-thru-metal.yaml
+episodes/horror/queue/short004-basement-button.yaml
