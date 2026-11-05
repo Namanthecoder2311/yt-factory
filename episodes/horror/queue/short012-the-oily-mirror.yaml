@@ -1,0 +1,63 @@
+title: The Oily Mirror
+channel: horror
+format: short
+hook: THE PUDDLE IN THE LOT HAS NO BOTTOM
+youtube:
+  title: 'Don''t Step in the Parking Lot Puddles 😨 #shorts'
+  description: It rained for three days straight. The parking lot developed a deep problem.
+  tags:
+  - parking lot horror
+  - scary stories
+  - rainy horror
+  - animated horror
+  - creepy
+  - supernatural
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Mia:
+    look: a young woman in her twenties with a dark ponytail, wearing a yellow rain jacket
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+  Clerk: am_fenrir
+stories:
+- title: The Oily Mirror
+  scenes:
+  - image: a dark asphalt parking lot with a large, shimmering black puddle
+    hero: the puddle reflects a sky that is full of stars despite the rain
+    lines:
+    - Narrator: The puddle in the parking lot has no bottom.
+    weather: rain
+  - image: Mia standing over the puddle, dropping her car keys into it
+    hero: the keys sink into the water and keep falling until they disappear
+    lines:
+    - Narrator: I dropped my keys and watched them fall for three minutes.
+    cast:
+    - Mia
+    weather: rain
+  - image: a pale hand reaching up out of the black water
+    hero: the hand grabs the edge of the asphalt and pulls a body upward
+    lines:
+    - Narrator: Then I saw a hand reach out from the water to grab the rim.
+    weather: rain
+  - image: Mia being pulled into the puddle by her own double
+    hero: Mia is dragged face-first into the oily water with a splash
+    lines:
+    - Narrator: '[SCARE] It pulled me down into the cold, dark asphalt.'
+    cast:
+    - Mia
+    weather: rain
+  - image: a view from under the water looking up at the parking lot lights
+    hero: the surface of the puddle hardens into solid asphalt above her
+    lines:
+    - Narrator: I'm looking up at the sky through a layer of oily water.
+    - Narrator: The puddle in the parking lot has no bottom.
+    cast:
+    - Mia
+    weather: rain

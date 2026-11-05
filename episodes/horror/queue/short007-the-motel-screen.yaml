@@ -1,0 +1,66 @@
+title: The Motel Screen
+channel: horror
+format: short
+hook: THE TV IN ROOM 10 ONLY SHOWS THE PAST
+youtube:
+  title: 'Don''t Look at the Motel TV Reflection 😨 #shorts'
+  description: I checked into a cheap motel off I-95. The TV wasn't even plugged in. Part of the Room
+    10 series.
+  tags:
+  - horror shorts
+  - scary stories
+  - motel horror
+  - animated horror
+  - creepy
+  - scary animation
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Daniel:
+    look: a 19 year old skinny young man with messy dark brown hair, tired eyes, wearing a blue store
+      employee vest over a grey hoodie and a name tag
+  Clerk:
+    look: the Night Clerk, an extremely tall thin faceless shadow figure in a dark store vest, two small
+      glowing white eyes, long arms hanging past its knees
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+  Clerk: am_fenrir
+stories:
+- title: The Motel Screen
+  scenes:
+  - image: a static-filled vintage TV in a dark, wood-paneled motel room
+    hero: the static on the screen forms a blurry image of the room we are currently in
+    lines:
+    - Narrator: The TV in my motel room only shows the past.
+  - image: Daniel sitting on the edge of the bed, staring at the blank TV screen
+    hero: Daniel slowly tilts his head while the TV reflection shows him standing up
+    lines:
+    - Narrator: I saw myself checking in two hours ago.
+    cast:
+    - Daniel
+  - image: the TV screen showing a dark figure crawling out from under the bed
+    hero: the thin shadow figure slides out from under the bed in the reflection
+    lines:
+    - Narrator: '[SFX:whisper] He is still there.'
+    cast:
+    - Clerk
+  - image: Daniel looking under the real bed with a flashlight
+    hero: the flashlight beam sweeps across the dusty, empty floor under the bed
+    lines:
+    - Narrator: I looked under the real bed but it was empty.
+    cast:
+    - Daniel
+  - image: a close-up of the TV screen showing the figure standing directly behind Daniel
+    hero: the Clerk's long fingers slowly reach for Daniel's neck on the screen
+    lines:
+    - Narrator: I realized the TV wasn't showing the past anymore.
+    - Narrator: The TV in my motel room only shows the past.
+    cast:
+    - Daniel
+    - Clerk

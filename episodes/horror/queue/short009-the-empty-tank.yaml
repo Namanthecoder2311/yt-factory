@@ -1,0 +1,62 @@
+title: The Empty Tank
+channel: horror
+format: short
+hook: THE GAS PUMP KNEW MY PRICE
+youtube:
+  title: 'The Gas Station That Charges Your Life 😨 #shorts'
+  description: I ran out of gas in the middle of nowhere. The price was more than I could pay.
+  tags:
+  - gas station horror
+  - scary stories
+  - night drive
+  - animated horror
+  - creepy
+  - horror story
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Clerk:
+    look: the Night Clerk, an extremely tall thin faceless shadow figure in a dark store vest, two small
+      glowing white eyes, long arms hanging past its knees
+  Mia:
+    look: a young woman in her twenties with a dark ponytail, wearing a yellow rain jacket
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+  Clerk: am_fenrir
+stories:
+- title: The Empty Tank
+  scenes:
+  - image: a lonely gas pump in the desert under a flickering neon sign
+    hero: the digital numbers on the pump start spinning before anyone touches it
+    lines:
+    - Narrator: The gas pump knew my price before I touched the nozzle.
+  - image: Mia's hand holding a credit card near the card reader
+    hero: the screen displays Mia's full name and her exact bank balance
+    lines:
+    - Narrator: The screen showed a dollar amount equal to my entire life savings.
+    cast:
+    - Mia
+  - image: the gas station booth where a silhouette is watching
+    hero: the Clerk slowly raises a hand to wave, showing too many fingers
+    lines:
+    - Clerk: Your total is your life.
+    cast:
+    - Clerk
+  - image: Mia trying to pull the nozzle out of her car as it begins to overflow with black oil
+    hero: the black liquid bubbles up and starts to coat her shoes
+    lines:
+    - Narrator: I watched the numbers on the screen start to count down instead of up.
+    cast:
+    - Mia
+  - image: the gas pump screen showing 0:00 with Mia's reflection looking pale
+    hero: Mia's reflection disappears from the screen, leaving only the empty pump
+    lines:
+    - Narrator: The gas pump always knows my price.
+    cast:
+    - Mia

@@ -1,0 +1,61 @@
+title: The Hallway Eye
+channel: horror
+format: short
+hook: THE LIGHT TURNS ON WHEN I LOOK OUT
+youtube:
+  title: 'Never Look Through the Apartment Peephole 😨 #shorts'
+  description: Something is waiting in the hallway. It only moves when you're watching.
+  tags:
+  - apartment horror
+  - scary stories
+  - peephole horror
+  - animated horror
+  - creepy
+  - ghost story
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Daniel:
+    look: a 19 year old skinny young man with messy dark brown hair, tired eyes, wearing a blue store
+      employee vest over a grey hoodie and a name tag
+  Clerk:
+    look: the Night Clerk, an extremely tall thin faceless shadow figure in a dark store vest, two small
+      glowing white eyes, long arms hanging past its knees
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+  Clerk: am_fenrir
+stories:
+- title: The Hallway Eye
+  scenes:
+  - image: a close-up of a door peephole in a dark apartment
+    hero: the small circular lens glows with a sickly yellow light from the hallway
+    lines:
+    - Narrator: The hallway light only turns on when I look through the peephole.
+  - image: a distorted view through the peephole of a long, empty corridor
+    hero: a tall shadow at the very end of the hall twitches closer in a blink
+    lines:
+    - Narrator: Every time I blink, the figure at the end of the hall gets closer.
+  - image: the shadow figure now standing right in front of the door
+    hero: the Clerk presses its featureless face against the other side of the lens
+    lines:
+    - Narrator: '[SFX:whisper] Let me in.'
+    cast:
+    - Clerk
+  - image: Daniel leaning back from the door in terror, clutching his eye
+    hero: Daniel's eye is glowing with the same yellow light as the hallway
+    lines:
+    - Narrator: I realized the light isn't in the hallway, it is coming from my eye.
+    cast:
+    - Daniel
+  - image: the door opening slowly from the outside into the dark room
+    hero: the Clerk steps into the room while Daniel stares through the peephole from the outside
+    lines:
+    - Narrator: The hallway light only turns on when I look through the peephole.
+    cast:
+    - Clerk

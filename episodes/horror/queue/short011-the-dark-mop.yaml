@@ -1,0 +1,62 @@
+title: The Dark Mop
+channel: horror
+format: short
+hook: THE JANITOR ONLY CLEANS IN THE DARK
+youtube:
+  title: 'The Night Shift Janitor isn''t Human 😨 #shorts'
+  description: The store is closed, but the cleaning has just begun. Stay in the light.
+  tags:
+  - night shift
+  - store horror
+  - scary stories
+  - animated horror
+  - creepy
+  - clerk horror
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Daniel:
+    look: a 19 year old skinny young man with messy dark brown hair, tired eyes, wearing a blue store
+      employee vest over a grey hoodie and a name tag
+  Clerk:
+    look: the Night Clerk, an extremely tall thin faceless shadow figure in a dark store vest, two small
+      glowing white eyes, long arms hanging past its knees
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+  Clerk: am_fenrir
+stories:
+- title: The Dark Mop
+  scenes:
+  - image: a dark grocery store aisle with a single flickering light at the end
+    hero: a wet mop slides slowly across the floor from the darkness
+    lines:
+    - Narrator: The janitor only cleans the floor when the lights are out.
+  - image: Daniel hiding behind a display of soda cans, looking scared
+    hero: Daniel flinches as the sound of a splashing mop bucket gets louder
+    lines:
+    - Narrator: I heard the mop bucket splashing in the dark cereal aisle.
+    cast:
+    - Daniel
+  - image: the floor of the aisle covered in black, wet handprints
+    hero: the handprints appear one by one on the floor without any visible person
+    lines:
+    - Narrator: When the lights flickered on, the floor was covered in black handprints.
+  - image: Daniel trapped inside a glass walk-in freezer
+    hero: a hand presses against the outside of the glass, leaving a black smudge
+    lines:
+    - Narrator: '[SFX:knock] Something tapped on the glass from the outside.'
+    cast:
+    - Daniel
+  - image: a silhouette of a person mopping in the dark store
+    hero: the silhouette turns around and its eyes glow white in the dark
+    lines:
+    - Narrator: I am the only one left to mop the floors now.
+    - Narrator: The janitor only cleans the floor when the lights are out.
+    cast:
+    - Clerk

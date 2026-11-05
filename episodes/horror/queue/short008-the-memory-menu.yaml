@@ -1,0 +1,65 @@
+title: The Memory Menu
+channel: horror
+format: short
+hook: THE MENU LISTS THINGS THAT AREN'T FOOD
+youtube:
+  title: 'Don''t Order the Secret Menu at the Drive-Thru 😨 #shorts'
+  description: I was hungry for a burger. I left with something much worse. A drive-thru horror story.
+  tags:
+  - drive thru horror
+  - scary stories
+  - night shift
+  - animated horror
+  - creepy
+  - urban legend
+style: dark 2D illustrated horror cartoon, clean bold outlines, muted teal and grey palette with sickly
+  fluorescent green light, heavy shadows, cinematic vertical composition, no text, no letters, no logos,
+  no gore
+characters:
+  Daniel:
+    look: a 19 year old skinny young man with messy dark brown hair, tired eyes, wearing a blue store
+      employee vest over a grey hoodie and a name tag
+  Clerk:
+    look: the Night Clerk, an extremely tall thin faceless shadow figure in a dark store vest, two small
+      glowing white eyes, long arms hanging past its knees
+speed: 1.0
+voices:
+  Narrator: am_michael
+  Intercom: am_echo
+  Stranger: am_onyx
+  Mia: af_bella
+  Daniel: am_puck
+  Clerk: am_fenrir
+stories:
+- title: The Memory Menu
+  scenes:
+  - image: a glowing drive-thru menu board in the rain at 2am
+    hero: the rain streaks across the glowing plastic board as the lights flicker
+    lines:
+    - Narrator: The drive-thru menu lists things that aren't food.
+    weather: rain
+  - image: Daniel looking out his car window at the menu options
+    hero: Daniel's eyes widen as he reads the strange text on the board
+    lines:
+    - Narrator: Below the cheeseburger, it offered a memory of my mother.
+    cast:
+    - Daniel
+    weather: rain
+  - image: the speaker box with a crackling sound effect
+    hero: the speaker box vibrates and emits a low, pulsing red light
+    lines:
+    - Clerk: You look like you're missing something.
+    weather: rain
+  - image: the car dashboard showing the GPS map spinning in circles
+    hero: the GPS arrow spins rapidly while the car remains stationary
+    lines:
+    - Narrator: I drove away, but every street led back to the speaker box.
+    weather: rain
+  - image: the menu board again, now with Daniel's face on the 'Value Meal' section
+    hero: the shadow of the Clerk looms over the car from the pick-up window
+    lines:
+    - Narrator: I finally saw my own name listed under the desserts.
+    - Narrator: The drive-thru menu lists things that aren't food.
+    cast:
+    - Clerk
+    weather: rain
