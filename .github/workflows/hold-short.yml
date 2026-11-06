@@ -1,0 +1,54 @@
+name: Hold scheduled Short
+run-name: Hold ${{ inputs.channel }} ${{ inputs.video_id }}
+
+# Cancels a Short's scheduled publish time and keeps it private. Uploads and publishes nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      video_id:
+        description: "YouTube video id"
+        required: true
+      channel:
+        description: "horror or kids"
+        required: true
+
+jobs:
+  hold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q google-api-python-client google-auth
+      - env:
+          VIDEO_ID: ${{ inputs.video_id }}
+          CHANNEL: ${{ inputs.channel }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN_HORROR: ${{ secrets.YT_REFRESH_TOKEN_HORROR }}
+          YT_REFRESH_TOKEN_KIDS: ${{ secrets.YT_REFRESH_TOKEN_KIDS }}
+        run: |
+          python - <<'PY'
+          import os, sys
+          from google.oauth2.credentials import Credentials
+          from googleapiclient.discovery import build
+          vid = os.environ["VIDEO_ID"]
+          creds = Credentials(None, refresh_token=os.environ[f"YT_REFRESH_TOKEN_{os.environ['CHANNEL'].upper()}"],
+                              client_id=os.environ["YT_CLIENT_ID"],
+                              client_secret=os.environ["YT_CLIENT_SECRET"],
+                              token_uri="https://oauth2.googleapis.com/token")
+          yt = build("youtube", "v3", credentials=creds, cache_discovery=False)
+          def status():
+              return yt.videos().list(part="status", id=vid).execute()["items"][0]["status"]
+          s = status()
+          print("before:", s["privacyStatus"], s.get("publishAt"))
+          if s["privacyStatus"] != "private":
+              sys.exit("this video is already live, nothing was changed")
+          yt.videos().update(part="status", body={"id": vid, "status": {
+              "privacyStatus": "private", "embeddable": s["embeddable"], "license": s["license"],
+              "publicStatsViewable": s["publicStatsViewable"],
+              "selfDeclaredMadeForKids": s["selfDeclaredMadeForKids"]}}).execute()
+          s = status()
+          print("after:", s["privacyStatus"], s.get("publishAt"))
+          sys.exit(1 if s.get("publishAt") else 0)
+          PY
