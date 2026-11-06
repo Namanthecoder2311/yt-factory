@@ -92,7 +92,7 @@ jobs:
       - name: Python packages (CPU torch)
         run: |
           pip install -q torch --index-url https://download.pytorch.org/whl/cpu
-          pip install -q -r requirements.txt
+          pip install -q -r requirements.txt || { sleep 60; pip install -q -r requirements.txt; }
 
       - name: Cache models
         uses: actions/cache@v4

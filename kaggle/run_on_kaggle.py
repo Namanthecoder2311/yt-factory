@@ -11,6 +11,7 @@ so the kernel may use a GPU and the internet).
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -78,10 +79,16 @@ def wait_and_fetch(kernel, out_dir, max_hours=5.5):
     deadline = time.time() + max_hours * 3600
     time.sleep(60)
     status = ""
+    denied = 0
     while time.time() < deadline:
-        status = kaggle("kernels", "status", kernel, check=False).stdout.lower()
+        r = kaggle("kernels", "status", kernel, check=False)
+        status = r.stdout.lower()
         if "complete" in status or "error" in status or "cancel" in status:
             break
+        # a kernel Kaggle cannot find never finishes: stop now instead of waiting for hours
+        denied = denied + 1 if "cannot access" in (r.stdout + r.stderr).lower() else 0
+        if denied >= 5:
+            sys.exit(f"Kaggle cannot find {kernel}")
         time.sleep(90)
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     kaggle("kernels", "output", kernel, "-p", out_dir, check=False)
@@ -112,6 +119,8 @@ if __name__ == "__main__":
     ap.add_argument("--name", default="anim")
     ap.add_argument("--log-only", action="store_true", help="only fetch and show the kernel's log")
     a = ap.parse_args()
+    # Kaggle slugs have single hyphens and no hyphen at the end, or the kernel id does not match
+    a.name = re.sub(r"[^a-z0-9]+", "-", a.name.lower()).strip("-")
     if a.log_only:
         kaggle("kernels", "output", f"{USER}/yt-{a.name}-runner", "-p", a.args[-1], check=False)
         show_log(a.args[-1], lines=200)

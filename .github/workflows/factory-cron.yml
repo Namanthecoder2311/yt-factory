@@ -119,16 +119,20 @@ jobs:
                           fix["publishAt"] = s["publishAt"]
                       try:
                           yt.videos().update(part="status", body={"id": v["id"], "status": fix}).execute()
-                          # the update reply leaves out madeForKids, so read it back
-                          s = yt.videos().list(part="status", id=v["id"]).execute()["items"][0]["status"]
-                          print(f"{ch}: {title} made-for-kids set to {kids}, now {s.get('madeForKids')}")
+                          print(f"{ch}: {title} made-for-kids sent as {kids}")
                       except Exception as e:
-                          s["madeForKids"] = None
                           print(f"{ch}: could not set made-for-kids on {title}: {e!r}"[:400])
-                      if s.get("madeForKids") != kids:
-                          subprocess.run(["gh", "issue", "create", "--title", f"⚠️ Wrong audience setting: {title}",
-                                          "--body", f"Made for Kids should be {kids} but is {s.get('madeForKids')} and "
-                                          f"the factory could not fix it. Set it in YouTube Studio: https://youtu.be/{v['id']}"])
+                      # YouTube can take a day or more to show the new value, so only a video that
+                      # is still wrong after 3 days is reported, and only once
+                      up = d.datetime.fromisoformat(v["snippet"]["publishedAt"].replace("Z", "+00:00"))
+                      name = f"⚠️ Wrong audience setting: {title}"
+                      known = subprocess.run(["gh", "issue", "list", "--search", f"{v['id']} in:body",
+                                              "--json", "number", "--jq", "length"],
+                                             capture_output=True, text=True).stdout.strip()
+                      if now - up > d.timedelta(days=3) and known == "0":
+                          subprocess.run(["gh", "issue", "create", "--title", name, "--body",
+                                          f"Made for Kids should be {kids} and the factory could not fix it. "
+                                          f"Set it in YouTube Studio: https://youtu.be/{v['id']}"])
                   at = s.get("publishAt")
                   if s["privacyStatus"] != "private" or not at:
                       continue  # only Shorts this factory scheduled
