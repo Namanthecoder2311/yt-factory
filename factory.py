@@ -627,7 +627,7 @@ def cmd_images(ep):
 
 
 def cmd_herojobs(ep, path):
-    """Kaggle animation jobs for every scene that has a `hero:` motion prompt."""
+    """Animation jobs for every scene that has a `hero:` motion prompt, for the video tool."""
     clips = []
     short = ep.get("format") == "short"
     lead = {"horror": "2D animated horror cartoon, cinematic, smooth motion.",
@@ -642,7 +642,7 @@ def cmd_herojobs(ep, path):
                 clips.append({"id": f"s{si}_{k:02d}", "image": str(ep["out"] / f"img_s{si}_{k:02d}.png"),
                               "prompt": f"{lead} {scene['hero']}", "steps": 30, **size})
     jobs = {"clips": clips}
-    if ep.get("song"):  # kids: the same Kaggle session also writes the song (ACE-Step)
+    if ep.get("song"):  # kids: the song to generate, saved as out/<slug>/song.wav
         jobs["song"] = ep["song"]
     Path(path).write_text(json.dumps(jobs, indent=1))
     print(f"{len(clips)} hero clips" + (" + song" if ep.get("song") else ""))

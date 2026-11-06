@@ -1,8 +1,8 @@
 # yt-factory
 
 Cloud pipeline for two faceless YouTube channels, **Midnight Aisle Tales** (horror) and
-**Wigglo Toons** (kids). Everything runs on free tiers: GitHub Actions, Cloudflare Workers AI and
-Kaggle GPUs. Nothing renders on the owner's laptop.
+**Wigglo Toons** (kids). Everything runs on free tiers: GitHub Actions and Cloudflare Workers AI.
+No video tool is connected right now, so no Shorts are being built. Nothing renders on the owner's laptop.
 
 ## Live status
 
@@ -10,9 +10,6 @@ The badges update on every run. Click one to see its run history.
 
 | Workflow | Live status | What it does |
 |---|---|---|
-| Build video | [![Build video](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/build.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/build.yml) | Episode YAML → images → Kaggle hero clips → voices → render → final MP4 + thumbnail |
-| Animate on Kaggle | [![Animate on Kaggle](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/animate.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/animate.yml) | Still image → 2 s motion clip (Wan 2.2) on a free T4 |
-| Kids 3D + song test | [![Kids test](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/kids-test.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/kids-test.yml) | Blender 3D Wigglo render + ACE-Step song on Kaggle |
 | Channel branding | [![Branding](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/branding.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/branding.yml) | Profile picture + banner from a branding YAML |
 | Niche research | [![Research](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/research.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/research.yml) | Top channels + outlier videos in a niche (yt-dlp) |
 | Factory schedule | [![Schedule](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/factory-cron.yml/badge.svg)](https://github.com/Namanthecoder2311/yt-factory/actions/workflows/factory-cron.yml) | Sun + Wed: builds the next episode in each channel's queue |
@@ -29,11 +26,7 @@ The badges update on every run. Click one to see its run history.
 | Sound design (ambience, knocks, whispers, scare hits) | ✅ Working | Episode 001 |
 | Parallax animation, fog, rain, scares, word captions | ✅ Working | Episode 001 |
 | Multi-story parallel render + assembly + thumbnail | ✅ Working | Episode 001 (7.4 min) |
-| Real AI motion clips on Kaggle (Wan 2.2, T4) | ✅ Working | 3 test clips, ~7 min per 2 s clip |
 | Channel branding generator | ✅ Working | Wigglo Toons + Midnight Aisle Tales live |
-| Hero clips inside the full video | 🔄 First run in progress | `pilot-60s.yaml` |
-| 3D Wigglo in Blender on Kaggle | 🔄 First run in progress | Kids test |
-| Kids songs with vocals (ACE-Step 1.5) | 🔄 First run in progress | Kids test |
 | Modal GPU (L40S/A10G/T4) | ⛔ Blocked | Needs a payment method on Modal |
 | Upload pack (title, description, tags, chapters, kids flag) | 🔨 Built, first real use next build | `upload.json` |
 | Episode queue + twice-weekly schedule | 🔨 Built | `episodes/<channel>/queue/` |
@@ -48,7 +41,7 @@ gh workflow run kids-test.yml
 gh workflow run branding.yml -f config=branding/midnight-aisle.yaml
 ```
 
-Secrets: `CF_ACCOUNT_ID`, `CF_API_TOKEN`, `KAGGLE_USERNAME`, `KAGGLE_KEY`,
+Secrets: `CF_ACCOUNT_ID`, `CF_API_TOKEN`,
 `MODAL_TOKEN_ID`, `MODAL_TOKEN_SECRET`.
 
 ## Licences of what we generate with

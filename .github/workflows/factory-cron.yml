@@ -31,6 +31,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           WANT: ${{ inputs.channel || 'all' }}
         run: |
+          # Kaggle was removed on 6 Nov 2026 and no video tool replaces it yet. A build now could
+          # only fail QA and use up the queue, so nothing starts. Delete these 2 lines to go live.
+          echo "No video tool connected: no builds started"
+          exit 0
           today=$(date -u +%Y-%m-%d)
           runs=$(gh run list -w build.yml -L 40 --json displayTitle,status,conclusion,createdAt)
           pubs=$(gh run list -w publish.yml -L 40 --json displayTitle,status,conclusion,createdAt)
@@ -67,7 +71,7 @@ jobs:
                      echo "$f"; break; done)
             if [ -z "$next" ]; then echo "$ch: queue empty"; continue; fi
             echo "$ch: building $next"
-            gh workflow run build.yml -f episode="$next" -f animate=true
+            gh workflow run build.yml -f episode="$next"
           done
 
   # Safety net: a Short whose scheduled time has passed but is still private is made public

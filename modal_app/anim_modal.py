@@ -2,9 +2,9 @@
 
     modal run modal_app/anim_modal.py --jobs tests/anim/jobs.json --out anim_out
 
-Same jobs.json format as kaggle/run_on_kaggle.py. A 48 GB L40S holds the text encoder and the
+Same jobs.json format as `factory.py herojobs`. A 48 GB L40S holds the text encoder and the
 5B transformer together, so nothing is offloaded and clips render several times faster than on
-Kaggle's T4. Model weights are cached in a Modal Volume after the first run.
+a T4. Model weights are cached in a Modal Volume after the first run.
 """
 import json
 import os

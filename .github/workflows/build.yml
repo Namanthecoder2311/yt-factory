@@ -7,13 +7,9 @@ on:
       episode:
         description: "Episode YAML path, e.g. episodes/horror/pilot-60s.yaml"
         required: true
-      animate:
-        description: "Animate scenes that have a hero: prompt on Kaggle (free GPU)"
-        type: boolean
-        default: true
 
 jobs:
-  # Characters, every scene image and the Kaggle hero clips are made once here, so all
+  # Characters and every scene image are made once here, so all
   # parallel story jobs share the same faces, images and animation.
   prep:
     runs-on: ubuntu-latest
@@ -31,7 +27,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -q pyyaml pillow numpy opencv-python-headless requests soundfile kaggle six
+      - run: pip install -q pyyaml pillow numpy opencv-python-headless requests soundfile
       - id: count
         run: echo "stories=$(python factory.py count '${{ inputs.episode }}')" >> "$GITHUB_OUTPUT"
       - name: Character references
@@ -44,18 +40,8 @@ jobs:
           git commit -qm "New character references" && git pull --rebase -q && git push -q
       - name: Scene images
         run: python factory.py images '${{ inputs.episode }}'
-      - name: Hero clips on Kaggle
-        if: ${{ inputs.animate }}
-        env:
-          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
-        run: |
-          python factory.py herojobs '${{ inputs.episode }}' --out hero_jobs.json
-          SLUG=$(basename '${{ inputs.episode }}' .yaml)
-          if python -c "import json,sys; sys.exit(0 if json.load(open('hero_jobs.json'))['clips'] else 1)"; then
-            # one Kaggle kernel per episode, so parallel builds never overwrite each other
-            python kaggle/run_on_kaggle.py hero_jobs.json "out/$SLUG" --name "anim-${SLUG:0:30}"
-          fi
+      # The next video tool goes here: `factory.py herojobs` lists the clips and the song to make,
+      # and they belong in out/<slug>/clips/ and out/<slug>/song.wav. Shorts fail QA without them.
       - uses: actions/upload-artifact@v4
         with:
           name: prep
