@@ -45,7 +45,8 @@ jobs:
           if s["privacyStatus"] != "private":
               sys.exit("this video is already live, nothing was changed")
           yt.videos().update(part="status", body={"id": vid, "status": {
-              "privacyStatus": "private", "embeddable": s["embeddable"], "license": s["license"],
+              "privacyStatus": "private", "publishAt": None,  # leaving it out keeps the schedule
+              "embeddable": s["embeddable"], "license": s["license"],
               "publicStatsViewable": s["publicStatsViewable"],
               "selfDeclaredMadeForKids": s["selfDeclaredMadeForKids"]}}).execute()
           s = status()
